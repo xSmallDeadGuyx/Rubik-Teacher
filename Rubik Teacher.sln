@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rubik Teacher", "Rubik Teacher\Rubik Teacher\Rubik Teacher.csproj", "{EF5FAA3C-FEBF-430E-B7BC-6C8E11682F77}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Rubik TeacherContent", "Rubik Teacher\Rubik TeacherContent\Rubik TeacherContent.contentproj", "{563D03B3-361A-4B6F-9EA3-58A826E1B72D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF5FAA3C-FEBF-430E-B7BC-6C8E11682F77}.Debug|x86.ActiveCfg = Debug|x86
+		{EF5FAA3C-FEBF-430E-B7BC-6C8E11682F77}.Debug|x86.Build.0 = Debug|x86
+		{EF5FAA3C-FEBF-430E-B7BC-6C8E11682F77}.Release|x86.ActiveCfg = Release|x86
+		{EF5FAA3C-FEBF-430E-B7BC-6C8E11682F77}.Release|x86.Build.0 = Release|x86
+		{563D03B3-361A-4B6F-9EA3-58A826E1B72D}.Debug|x86.ActiveCfg = Debug|x86
+		{563D03B3-361A-4B6F-9EA3-58A826E1B72D}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
