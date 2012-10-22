@@ -37,10 +37,20 @@ namespace Rubik_Teacher {
 		public Random rand = new Random();
 
 		public FaceID rotatingFace = FaceID.Top;
+		public Move lastMove;
 		public float faceAngle = 0.0F;
+		public float rotatePerStep = MathHelper.PiOver2 / 200.0F;
+		public float rotatingTo = MathHelper.PiOver2;
+		public bool rotatingBackwards = false;
+
+		public bool animateFaces = true;
+		public int performDelay = 100;
+		public int delaySoFar = 0;
 
 		public bool[] verticesChanged = new bool[6];
 		public List<VertexPositionColorTexture[]> faceVertices = new List<VertexPositionColorTexture[]>();
+
+		public Queue<Move> moveQueue = new Queue<Move>();
 
 		protected override void Initialize() {
 			timer = Stopwatch.StartNew();
@@ -60,6 +70,7 @@ namespace Rubik_Teacher {
 			rs.CullMode = CullMode.CullCounterClockwiseFace;
 			rs.FillMode = FillMode.Solid;
 			GraphicsDevice.RasterizerState = rs;
+			
 
 			effect = new BasicEffect(GraphicsDevice);
 			effect.VertexColorEnabled = true;
@@ -79,6 +90,49 @@ namespace Rubik_Teacher {
 		}
 
 		protected void update() {
+			if(moveQueue.Count > 0 && delaySoFar == 0 && faceAngle <= 0.0F) {
+				Move move = moveQueue.Dequeue();
+				delaySoFar = performDelay;
+				if(animateFaces) {
+					verticesChanged[(int) lastMove.face] = true;
+					for(int i = 0; i < 6; i++)
+						if(areAdjacent(lastMove.face, (FaceID) i))
+							verticesChanged[i] = true;
+
+					rotatingBackwards = move.twist == CubeMove.AntiClockwise;
+					rotatingFace = move.face;
+					faceAngle = rotatePerStep;
+					if(move.twist == CubeMove.Double) rotatingTo = MathHelper.Pi;
+					else rotatingTo = MathHelper.PiOver2;
+					lastMove = move;
+				}
+				else {
+					verticesChanged[(int) lastMove.face] = true;
+					for(int i = 0; i < 6; i++)
+						if(areAdjacent(lastMove.face, (FaceID) i))
+							verticesChanged[i] = true;
+					cube.performMove(move);
+				}
+			}
+			if(delaySoFar > 0) delaySoFar--;
+			if(faceAngle > 0.0F) {
+				verticesChanged[(int) lastMove.face] = true;
+				for(int i = 0; i < 6; i++)
+					if(areAdjacent(lastMove.face, (FaceID) i))
+						verticesChanged[i] = true;
+
+				faceAngle += rotatePerStep;
+			}
+			if(faceAngle >= rotatingTo) {
+				verticesChanged[(int) lastMove.face] = true;
+				for(int i = 0; i < 6; i++)
+					if(areAdjacent(lastMove.face, (FaceID) i))
+						verticesChanged[i] = true;
+
+				faceAngle = 0.0F;
+				cube.performMove(lastMove);
+			}
+
 			KeyboardState kb = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
 
@@ -122,6 +176,9 @@ namespace Rubik_Teacher {
 				effect.View = viewMatrix;
 				effect.Projection = projectionMatrix;
 
+				GraphicsDevice.BlendState = BlendState.Opaque;
+				GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
 				foreach(EffectPass p in effect.CurrentTechnique.Passes)
 					p.Apply();
 
@@ -137,74 +194,128 @@ namespace Rubik_Teacher {
 		}
 
 		public VertexPositionColorTexture[] generateFaceVertices(FaceID face) {
-			VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[54];
+			VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[108];
 			switch(face) {
 				case FaceID.Top:
 					for(int x = 0; x < 3; x++) for(int z = 0; z < 3; z++) {
-							Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, z]];
-							vertices[x * 6 + z * 18 + 0] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, -1.5F, (float) z - 1.5F), c, new Vector2(0, 0));
-							vertices[x * 6 + z * 18 + 1] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, -1.5F, (float) z - 0.5F), c, new Vector2(1, 1));
-							vertices[x * 6 + z * 18 + 2] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, -1.5F, (float) z - 1.5F), c, new Vector2(1, 0));
-							vertices[x * 6 + z * 18 + 3] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, -1.5F, (float) z - 1.5F), c, new Vector2(0, 0));
-							vertices[x * 6 + z * 18 + 4] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, -1.5F, (float) z - 0.5F), c, new Vector2(0, 1));
-							vertices[x * 6 + z * 18 + 5] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, -1.5F, (float) z - 0.5F), c, new Vector2(1, 1));
-						}
+						Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, z]];
+						vertices[x * 12 + z * 36 + 0] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, -1.5F, 1.5F - (float) z), c, new Vector2(0, 0));
+						vertices[x * 12 + z * 36 + 1] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, -1.5F, 0.5F - (float) z), c, new Vector2(1, 1));
+						vertices[x * 12 + z * 36 + 2] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, -1.5F, 1.5F - (float) z), c, new Vector2(1, 0));
+						vertices[x * 12 + z * 36 + 3] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, -1.5F, 1.5F - (float) z), c, new Vector2(0, 0));
+						vertices[x * 12 + z * 36 + 4] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, -1.5F, 0.5F - (float) z), c, new Vector2(0, 1));
+						vertices[x * 12 + z * 36 + 5] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, -1.5F, 0.5F - (float) z), c, new Vector2(1, 1));
+
+						vertices[x * 12 + z * 36 + 6] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, -1.5F, 1.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 7] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, -1.5F, 1.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 8] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, -1.5F, 0.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 9] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, -1.5F, 1.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 10] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, -1.5F, 0.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 11] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, -1.5F, 0.5F - (float) z), Color.Black, Vector2.Zero);
+					}
 					break;
 				case FaceID.Bottom:
 					for(int x = 0; x < 3; x++) for(int z = 0; z < 3; z++) {
-							Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, z]];
-							vertices[x * 6 + z * 18 + 0] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, 1.5F, 0.5F - (float) z), c, new Vector2(0, 0));
-							vertices[x * 6 + z * 18 + 1] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, 1.5F, 0.5F - (float) z), c, new Vector2(1, 0));
-							vertices[x * 6 + z * 18 + 2] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, 1.5F, 1.5F - (float) z), c, new Vector2(1, 1));
-							vertices[x * 6 + z * 18 + 3] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, 1.5F, 0.5F - (float) z), c, new Vector2(0, 0));
-							vertices[x * 6 + z * 18 + 4] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, 1.5F, 1.5F - (float) z), c, new Vector2(1, 1));
-							vertices[x * 6 + z * 18 + 5] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, 1.5F, 1.5F - (float) z), c, new Vector2(0, 1));
-						}
+						Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, z]];
+						vertices[x * 12 + z * 36 + 0] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, 1.5F, (float) z - 0.5F), c, new Vector2(0, 0));
+						vertices[x * 12 + z * 36 + 1] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, 1.5F, (float) z - 0.5F), c, new Vector2(1, 0));
+						vertices[x * 12 + z * 36 + 2] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, 1.5F, (float) z - 1.5F), c, new Vector2(1, 1));
+						vertices[x * 12 + z * 36 + 3] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, 1.5F, (float) z - 0.5F), c, new Vector2(0, 0));
+						vertices[x * 12 + z * 36 + 4] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, 1.5F, (float) z - 1.5F), c, new Vector2(1, 1));
+						vertices[x * 12 + z * 36 + 5] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, 1.5F, (float) z - 1.5F), c, new Vector2(0, 1));
+
+						vertices[x * 12 + z * 36 + 6] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, 1.5F, (float) z - 0.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 7] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, 1.5F, (float) z - 1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 8] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, 1.5F, (float) z - 0.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 9] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, 1.5F, (float) z - 0.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 10] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, 1.5F, (float) z - 1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + z * 36 + 11] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, 1.5F, (float) z - 1.5F), Color.Black, Vector2.Zero);
+					}
 					break;
 				case FaceID.Front:
 					for(int x = 0; x < 3; x++) for(int y = 0; y < 3; y++) {
-							Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, y]];
-							vertices[x * 6 + y * 18 + 0] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 1.5F, 1.5F), c, new Vector2(0, 0));
-							vertices[x * 6 + y * 18 + 1] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 0.5F, 1.5F), c, new Vector2(1, 1));
-							vertices[x * 6 + y * 18 + 2] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 1.5F, 1.5F), c, new Vector2(1, 0));
-							vertices[x * 6 + y * 18 + 3] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 1.5F, 1.5F), c, new Vector2(0, 0));
-							vertices[x * 6 + y * 18 + 4] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 0.5F, 1.5F), c, new Vector2(0, 1));
-							vertices[x * 6 + y * 18 + 5] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 0.5F, 1.5F), c, new Vector2(1, 1));
-						}
+						Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, y]];
+						vertices[x * 12 + y * 36 + 0] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 1.5F, -1.5F), c, new Vector2(0, 0));
+						vertices[x * 12 + y * 36 + 1] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 0.5F, -1.5F), c, new Vector2(1, 1));
+						vertices[x * 12 + y * 36 + 2] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 1.5F, -1.5F), c, new Vector2(1, 0));
+						vertices[x * 12 + y * 36 + 3] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 1.5F, -1.5F), c, new Vector2(0, 0));
+						vertices[x * 12 + y * 36 + 4] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 0.5F, -1.5F), c, new Vector2(0, 1));
+						vertices[x * 12 + y * 36 + 5] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 0.5F, -1.5F), c, new Vector2(1, 1));
+
+						vertices[x * 12 + y * 36 + 6] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 1.5F, -1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 7] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 1.5F, -1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 8] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 0.5F, -1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 9] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 1.5F, -1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 10] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 0.5F, -1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 11] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 0.5F, -1.5F), Color.Black, Vector2.Zero);
+					}
 					break;
 				case FaceID.Back:
 					for(int x = 0; x < 3; x++) for(int y = 0; y < 3; y++) {
-							Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, y]];
-							vertices[x * 6 + y * 18 + 0] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 1.5F, -1.5F), c, new Vector2(0, 0));
-							vertices[x * 6 + y * 18 + 1] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 1.5F, -1.5F), c, new Vector2(1, 0));
-							vertices[x * 6 + y * 18 + 2] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 0.5F, -1.5F), c, new Vector2(1, 1));
-							vertices[x * 6 + y * 18 + 3] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 1.5F, -1.5F), c, new Vector2(0, 0));
-							vertices[x * 6 + y * 18 + 4] = new VertexPositionColorTexture(new Vector3((float) x - 0.5F, (float) y - 0.5F, -1.5F), c, new Vector2(1, 1));
-							vertices[x * 6 + y * 18 + 5] = new VertexPositionColorTexture(new Vector3((float) x - 1.5F, (float) y - 0.5F, -1.5F), c, new Vector2(0, 1));
-						}
+						Color c = cube.colourIDs[(int) cube.faceColours[(int) face, x, y]];
+						vertices[x * 12 + y * 36 + 0] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 1.5F, 1.5F), c, new Vector2(0, 0));
+						vertices[x * 12 + y * 36 + 1] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 1.5F, 1.5F), c, new Vector2(1, 0));
+						vertices[x * 12 + y * 36 + 2] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 0.5F, 1.5F), c, new Vector2(1, 1));
+						vertices[x * 12 + y * 36 + 3] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 1.5F, 1.5F), c, new Vector2(0, 0));
+						vertices[x * 12 + y * 36 + 4] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 0.5F, 1.5F), c, new Vector2(1, 1));
+						vertices[x * 12 + y * 36 + 5] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 0.5F, 1.5F), c, new Vector2(0, 1));
+
+						vertices[x * 12 + y * 36 + 6] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 1.5F, 1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 7] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 0.5F, 1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 8] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 1.5F, 1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 9] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 1.5F, 1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 10] = new VertexPositionColorTexture(new Vector3(1.5F - (float) x, (float) y - 0.5F, 1.5F), Color.Black, Vector2.Zero);
+						vertices[x * 12 + y * 36 + 11] = new VertexPositionColorTexture(new Vector3(0.5F - (float) x, (float) y - 0.5F, 1.5F), Color.Black, Vector2.Zero);
+					}
 					break;
 				case FaceID.Left:
 					for(int y = 0; y < 3; y++) for(int z = 0; z < 3; z++) {
-							Color c = cube.colourIDs[(int) cube.faceColours[(int) face, z, y]];
-							vertices[y * 6 + z * 18 + 0] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 1.5F), c, new Vector2(0, 0));
-							vertices[y * 6 + z * 18 + 1] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 0.5F), c, new Vector2(1, 1));
-							vertices[y * 6 + z * 18 + 2] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 1.5F), c, new Vector2(1, 0));
-							vertices[y * 6 + z * 18 + 3] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 1.5F), c, new Vector2(0, 0));
-							vertices[y * 6 + z * 18 + 4] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 0.5F), c, new Vector2(0, 1));
-							vertices[y * 6 + z * 18 + 5] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 0.5F), c, new Vector2(1, 1));
-						}
+						Color c = cube.colourIDs[(int) cube.faceColours[(int) face, z, y]];
+						vertices[z * 12 + y * 36 + 0] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 1.5F - (float) z), c, new Vector2(0, 0));
+						vertices[z * 12 + y * 36 + 1] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 0.5F - (float) z), c, new Vector2(1, 1));
+						vertices[z * 12 + y * 36 + 2] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 1.5F - (float) z), c, new Vector2(1, 0));
+						vertices[z * 12 + y * 36 + 3] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 1.5F - (float) z), c, new Vector2(0, 0));
+						vertices[z * 12 + y * 36 + 4] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 0.5F - (float) z), c, new Vector2(0, 1));
+						vertices[z * 12 + y * 36 + 5] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 0.5F - (float) z), c, new Vector2(1, 1));
+
+						vertices[z * 12 + y * 36 + 6] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 1.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 7] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 1.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 8] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 0.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 9] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 1.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 10] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 0.5F - (float) z), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 11] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 0.5F - (float) z), Color.Black, Vector2.Zero);
+					}
 					break;
 				case FaceID.Right:
 					for(int y = 0; y < 3; y++) for(int z = 0; z < 3; z++) {
-							Color c = cube.colourIDs[(int) cube.faceColours[(int) face, z, y]];
-							vertices[y * 6 + z * 18 + 0] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 0.5F - (float) z), c, new Vector2(0, 0));
-							vertices[y * 6 + z * 18 + 1] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 0.5F - (float) z), c, new Vector2(1, 0));
-							vertices[y * 6 + z * 18 + 2] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 1.5F - (float) z), c, new Vector2(1, 1));
-							vertices[y * 6 + z * 18 + 3] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 0.5F - (float) z), c, new Vector2(0, 0));
-							vertices[y * 6 + z * 18 + 4] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 0.5F, 1.5F - (float) z), c, new Vector2(1, 1));
-							vertices[y * 6 + z * 18 + 5] = new VertexPositionColorTexture(new Vector3(-1.5F, (float) y - 1.5F, 1.5F - (float) z), c, new Vector2(0, 1));
-						}
+						Color c = cube.colourIDs[(int) cube.faceColours[(int) face, z, y]];
+						vertices[z * 12 + y * 36 + 0] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 0.5F), c, new Vector2(0, 0));
+						vertices[z * 12 + y * 36 + 1] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 0.5F), c, new Vector2(1, 0));
+						vertices[z * 12 + y * 36 + 2] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 1.5F), c, new Vector2(1, 1));
+						vertices[z * 12 + y * 36 + 3] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 0.5F), c, new Vector2(0, 0));
+						vertices[z * 12 + y * 36 + 4] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 1.5F), c, new Vector2(1, 1));
+						vertices[z * 12 + y * 36 + 5] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 1.5F), c, new Vector2(0, 1));
+
+						vertices[z * 12 + y * 36 + 6] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 0.5F), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 7] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 1.5F), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 8] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 0.5F), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 9] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 0.5F), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 10] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 1.5F, (float) z - 1.5F), Color.Black, Vector2.Zero);
+						vertices[z * 12 + y * 36 + 11] = new VertexPositionColorTexture(new Vector3(1.5F, (float) y - 0.5F, (float) z - 1.5F), Color.Black, Vector2.Zero);
+					}
 					break;
+			}
+
+			if(faceAngle > 0.0F && face == rotatingFace) {
+				for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) for(int n = 0; n < 12; n++)
+					vertices[i * 12 + j * 36 + n].Position = rotate(face, vertices[i * 12 + j * 36 + n].Position, faceAngle);
+			}
+			else if(faceAngle > 0.0F && areAdjacent(face, rotatingFace)) {
+				for(int i = 0; i < 3; i++) foreach(FaceCoord coords in new FaceCoord[] { cube.transposeFromFront(rotatingFace, FaceID.Top, i, 2), cube.transposeFromFront(rotatingFace, FaceID.Left, 2, i), cube.transposeFromFront(rotatingFace, FaceID.Right, 0, i), cube.transposeFromFront(rotatingFace, FaceID.Bottom, i, 0) }) {
+					if(coords.face == face)
+						for(int n = 0; n < 12; n++)
+							vertices[coords.i * 12 + coords.j * 36 + n].Position = rotate(rotatingFace, vertices[coords.i * 12 + coords.j * 36 + n].Position, faceAngle);
+				}
 			}
 			return vertices;
 		}
@@ -216,6 +327,58 @@ namespace Rubik_Teacher {
 				(face1 == FaceID.Bottom && face2 == FaceID.Top) ||
 				(face1 == FaceID.Back && face2 == FaceID.Front) ||
 				(face1 == FaceID.Left && face2 == FaceID.Right));
+		}
+
+		public Vector3 rotate(FaceID face, Vector3 vector, float angle) {
+			if(rotatingBackwards) angle = -angle;
+			Vector3 rotated = new Vector3(vector.X, vector.Y, vector.Z);
+			switch(face) {
+				case FaceID.Top:
+					rotated = Vector3.Transform(vector, Matrix.CreateRotationY(angle));
+					break;
+				case FaceID.Bottom:
+					rotated = Vector3.Transform(vector, Matrix.CreateRotationY(-angle));
+					break;
+				case FaceID.Front:
+					rotated = Vector3.Transform(vector, Matrix.CreateRotationZ(angle));
+					break;
+				case FaceID.Back:
+					rotated = Vector3.Transform(vector, Matrix.CreateRotationZ(-angle));
+					break;
+				case FaceID.Left:
+					rotated = Vector3.Transform(vector, Matrix.CreateRotationX(angle));
+					break;
+				case FaceID.Right:
+					rotated = Vector3.Transform(vector, Matrix.CreateRotationX(-angle));
+					break;
+			}
+			return rotated;
+		}
+
+		public void performMove(String s) {
+			for(int i = 0; i < 6; i++) {
+				char l = cube.faceLetters[i];
+				if(s == l.ToString()) {
+					performMove((FaceID) i, CubeMove.Clockwise);
+					return;
+				}
+				if(s == l.ToString() + "'") {
+					performMove((FaceID) i, CubeMove.AntiClockwise);
+					return;
+				}
+				if(s == "2" + l.ToString()) {
+					performMove((FaceID) i, CubeMove.Double);
+					return;
+				}
+			}
+		}
+
+		public void performMove(FaceID face, CubeMove rot) {
+			performMove(new Move(face, rot));
+		}
+
+		public void performMove(Move move) {
+			moveQueue.Enqueue(move);
 		}
 	}
 }

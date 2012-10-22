@@ -31,13 +31,14 @@
 			this.console = new DevComponents.DotNetBar.Controls.TextBoxX();
 			this.consoleInput = new DevComponents.DotNetBar.Controls.TextBoxX();
 			this.displayPanel = new DevComponents.DotNetBar.PanelEx();
+			this.animatedFacesButton = new DevComponents.DotNetBar.ButtonX();
 			this.showNetButton = new DevComponents.DotNetBar.ButtonX();
 			this.shufflePanel = new DevComponents.DotNetBar.PanelEx();
 			this.movesLabel = new DevComponents.DotNetBar.LabelX();
 			this.shuffleButton = new DevComponents.DotNetBar.ButtonX();
 			this.shuffleInput = new DevComponents.Editors.IntegerInput();
-			this.ribbonPanel1 = new DevComponents.DotNetBar.RibbonPanel();
 			this.solverPanel = new DevComponents.DotNetBar.RibbonPanel();
+			this.ribbonPanel1 = new DevComponents.DotNetBar.RibbonPanel();
 			this.cubeTab = new DevComponents.DotNetBar.RibbonTabItem();
 			this.Solver = new DevComponents.DotNetBar.RibbonTabItem();
 			this.Style = new DevComponents.DotNetBar.RibbonTabItem();
@@ -63,8 +64,8 @@
 			this.ribbonControl.CanCustomize = false;
 			this.ribbonControl.CaptionVisible = true;
 			this.ribbonControl.Controls.Add(this.cubeControlPanel);
-			this.ribbonControl.Controls.Add(this.ribbonPanel1);
 			this.ribbonControl.Controls.Add(this.solverPanel);
+			this.ribbonControl.Controls.Add(this.ribbonPanel1);
 			this.ribbonControl.Dock = System.Windows.Forms.DockStyle.Top;
 			this.ribbonControl.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.cubeTab,
@@ -153,7 +154,6 @@
 			this.undoButton.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
 			this.undoButton.TabIndex = 2;
 			this.undoButton.Text = "Undo";
-			this.undoButton.Click += new System.EventHandler(this.undoButton_Click);
 			// 
 			// console
 			// 
@@ -189,6 +189,7 @@
 			// 
 			this.displayPanel.CanvasColor = System.Drawing.SystemColors.Control;
 			this.displayPanel.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+			this.displayPanel.Controls.Add(this.animatedFacesButton);
 			this.displayPanel.Controls.Add(this.showNetButton);
 			this.displayPanel.Location = new System.Drawing.Point(167, 3);
 			this.displayPanel.Name = "displayPanel";
@@ -201,6 +202,19 @@
 			this.displayPanel.Style.ForeColor.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelText;
 			this.displayPanel.Style.GradientAngle = 90;
 			this.displayPanel.TabIndex = 1;
+			// 
+			// animatedFacesButton
+			// 
+			this.animatedFacesButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
+			this.animatedFacesButton.Checked = true;
+			this.animatedFacesButton.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+			this.animatedFacesButton.Location = new System.Drawing.Point(3, 44);
+			this.animatedFacesButton.Name = "animatedFacesButton";
+			this.animatedFacesButton.Size = new System.Drawing.Size(136, 40);
+			this.animatedFacesButton.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+			this.animatedFacesButton.TabIndex = 1;
+			this.animatedFacesButton.Text = "Animated Faces";
+			this.animatedFacesButton.Click += new System.EventHandler(this.animatedFacesButton_Click);
 			// 
 			// showNetButton
 			// 
@@ -277,6 +291,32 @@
 			this.shuffleInput.TabIndex = 0;
 			this.shuffleInput.Value = 50;
 			// 
+			// solverPanel
+			// 
+			this.solverPanel.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+			this.solverPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.solverPanel.Location = new System.Drawing.Point(0, 56);
+			this.solverPanel.Name = "solverPanel";
+			this.solverPanel.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
+			this.solverPanel.Size = new System.Drawing.Size(630, 96);
+			// 
+			// 
+			// 
+			this.solverPanel.Style.Class = "";
+			this.solverPanel.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+			// 
+			// 
+			// 
+			this.solverPanel.StyleMouseDown.Class = "";
+			this.solverPanel.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+			// 
+			// 
+			// 
+			this.solverPanel.StyleMouseOver.Class = "";
+			this.solverPanel.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+			this.solverPanel.TabIndex = 2;
+			this.solverPanel.Visible = false;
+			// 
 			// ribbonPanel1
 			// 
 			this.ribbonPanel1.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -302,32 +342,6 @@
 			this.ribbonPanel1.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
 			this.ribbonPanel1.TabIndex = 3;
 			this.ribbonPanel1.Visible = false;
-			// 
-			// solverPanel
-			// 
-			this.solverPanel.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-			this.solverPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.solverPanel.Location = new System.Drawing.Point(0, 0);
-			this.solverPanel.Name = "solverPanel";
-			this.solverPanel.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
-			this.solverPanel.Size = new System.Drawing.Size(630, 152);
-			// 
-			// 
-			// 
-			this.solverPanel.Style.Class = "";
-			this.solverPanel.Style.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-			// 
-			// 
-			// 
-			this.solverPanel.StyleMouseDown.Class = "";
-			this.solverPanel.StyleMouseDown.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-			// 
-			// 
-			// 
-			this.solverPanel.StyleMouseOver.Class = "";
-			this.solverPanel.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-			this.solverPanel.TabIndex = 2;
-			this.solverPanel.Visible = false;
 			// 
 			// cubeTab
 			// 
@@ -425,5 +439,6 @@
 		public DevComponents.DotNetBar.Controls.TextBoxX consoleInput;
 		public DevComponents.DotNetBar.Controls.TextBoxX console;
 		public DevComponents.DotNetBar.ButtonX undoButton;
+		public DevComponents.DotNetBar.ButtonX animatedFacesButton;
 	}
 }

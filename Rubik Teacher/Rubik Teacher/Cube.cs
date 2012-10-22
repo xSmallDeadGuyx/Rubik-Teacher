@@ -15,14 +15,19 @@ namespace Rubik_Teacher {
 		public Move(FaceID f, CubeMove t) { face = f; twist = t; }
 	}
 
+	public struct FaceCoord {
+		public FaceID face;
+		public int i;
+		public int j;
+
+		public FaceCoord(FaceID f, int i, int j) { face = f; this.i = i; this.j = j; }
+	}
+
 	public class Cube {
 
 		public readonly string faceLetters = "UDFBLR";
 		public readonly string validStringCharacters = "UDFBLR'2";
 		public FaceID[,,] faceColours = new FaceID[6, 3, 3];
-
-		private List<Move> undoMoves = new List<Move>();
-		private List<Move> redoMoves = new List<Move>();
 
 		public Color[] colourIDs = {Color.Orange, Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.White};
 
@@ -119,158 +124,181 @@ namespace Rubik_Teacher {
 		}
 
 		public void performMove(FaceID face, CubeMove rot) {
-			if(redoMoves.Count > 0) {
-				redoMoves.Clear();
-				undoMoves.Clear();
-			}
-			undoMoves.Add(new Move(face, rot));
 			actualMove(face, rot);
-		}
-
-		public void undoNMoves(int n) {
-			for(int i = 0; i < n; i++) undoMove();
-		}
-
-		public void undoMove() {
-			if(undoMoves.Count > 0) {
-				Move move = undoMoves.Last<Move>();
-				undoMoves.RemoveAt(undoMoves.Count - 1);
-				redoMoves.Add(move);
-				actualMove(move.face, move.twist);
-			}
-		}
-
-		public void redoNMoves(int n) {
-			for(int i = 0; i < n; i++) redoMove();
-		}
-
-		public void redoMove() {
-			if(redoMoves.Count > 0) {
-				Move move = redoMoves.Last<Move>();
-				redoMoves.RemoveAt(undoMoves.Count - 1);
-				undoMoves.Add(move);
-				actualMove(move.face, move.twist);
-			}
 		}
 
 		private void actualMove(FaceID face, CubeMove rot) {
 			FaceID[,] transposed = new FaceID[5, 5];
-			switch(face) {
+			for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) {
+				FaceCoord coords = transposeFromFront(face, FaceID.Front, i, j);
+				transposed[i + 1, j + 1] = faceColours[(int) coords.face, coords.i, coords.j];
+			}
+			for(int i = 0; i < 3; i++) {
+				FaceCoord coords = transposeFromFront(face, FaceID.Top, i, 2);
+				transposed[i + 1, 0] = faceColours[(int) coords.face, coords.i, coords.j];
+				coords = transposeFromFront(face, FaceID.Left, 2, i);
+				transposed[0, i + 1] = faceColours[(int) coords.face, coords.i, coords.j];
+				coords = transposeFromFront(face, FaceID.Right, 0, i);
+				transposed[4, i + 1] = faceColours[(int) coords.face, coords.i, coords.j];
+				coords = transposeFromFront(face, FaceID.Bottom, i, 0);
+				transposed[i + 1, 4] = faceColours[(int) coords.face, coords.i, coords.j];
+			}
+			transposed = rotateFace(transposed, rot);
+			for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) {
+				FaceCoord coords = transposeFromFront(face, FaceID.Front, i, j);
+				faceColours[(int) coords.face, coords.i, coords.j] = transposed[i + 1, j + 1];
+			}
+			for(int i = 0; i < 3; i++) {
+				FaceCoord coords = transposeFromFront(face, FaceID.Top, i, 2);
+				faceColours[(int) coords.face, coords.i, coords.j] = transposed[i + 1, 0];
+				coords = transposeFromFront(face, FaceID.Left, 2, i);
+				faceColours[(int) coords.face, coords.i, coords.j] = transposed[0, i + 1];
+				coords = transposeFromFront(face, FaceID.Right, 0, i);
+				faceColours[(int) coords.face, coords.i, coords.j] = transposed[4, i + 1];
+				coords = transposeFromFront(face, FaceID.Bottom, i, 0);
+				faceColours[(int) coords.face, coords.i, coords.j] = transposed[i + 1, 4];
+			}
+		}
+
+		public FaceCoord transposeFromFront(FaceID target, FaceID face, int i, int j) {
+			return transposeFromFront(target, new FaceCoord(face, i, j));
+		}
+
+		public FaceCoord transposeFromFront(FaceID target, FaceCoord coords) {
+			FaceCoord newCoords = new FaceCoord(coords.face, coords.i, coords.j);
+			switch(target) {
 				case FaceID.Top:
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-						transposed[i + 1, j + 1] = faceColours[(int) FaceID.Top, i, j];
-					for(int i = 0; i < 3; i++) {
-						transposed[i + 1, 0] = faceColours[(int) FaceID.Back, 2 - i, 0];
-						transposed[0, i + 1] = faceColours[(int) FaceID.Left, i, 0];
-						transposed[4, i + 1] = faceColours[(int) FaceID.Right, 2 - i, 0];
-						transposed[i + 1, 4] = faceColours[(int) FaceID.Front, i, 0];
-					}
-					transposed = rotateFace(transposed, rot);
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-						faceColours[(int) FaceID.Top, i, j] = transposed[i + 1, j + 1];
-					for(int i = 0; i < 3; i++) {
-						faceColours[(int) FaceID.Back, 2 - i, 0] = transposed[i + 1, 0];
-						faceColours[(int) FaceID.Left, i, 0] = transposed[0, i + 1];
-						faceColours[(int) FaceID.Right, 2 - i, 0] = transposed[4, i + 1];
-						faceColours[(int) FaceID.Front, i, 0] = transposed[i + 1, 4];
-					}
-					break;
-				case FaceID.Left:
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							transposed[i + 1, j + 1] = faceColours[(int) FaceID.Left, i, j];
-					for(int i = 0; i < 3; i++) {
-						transposed[i + 1, 0] = faceColours[(int) FaceID.Top, 0, i];
-						transposed[0, i + 1] = faceColours[(int) FaceID.Back, 2, i];
-						transposed[4, i + 1] = faceColours[(int) FaceID.Front, 0, i];
-						transposed[i + 1, 4] = faceColours[(int) FaceID.Bottom, 0, 2 - i];
-					}
-					transposed = rotateFace(transposed, rot);
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							faceColours[(int) FaceID.Left, i, j] = transposed[i + 1, j + 1];
-					for(int i = 0; i < 3; i++) {
-						faceColours[(int) FaceID.Top, 0, i] = transposed[i + 1, 0];
-						faceColours[(int) FaceID.Back, 2, i] = transposed[0, i + 1];
-						faceColours[(int) FaceID.Front, 0, i] = transposed[4, i + 1];
-						faceColours[(int) FaceID.Bottom, 0, 2 - i] = transposed[i + 1, 4];
-					}
-					break;
-				case FaceID.Front:
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							transposed[i + 1, j + 1] = faceColours[(int) FaceID.Front, i, j];
-					for(int i = 0; i < 3; i++) {
-						transposed[i + 1, 0] = faceColours[(int) FaceID.Top, i, 2];
-						transposed[0, i + 1] = faceColours[(int) FaceID.Left, 2, i];
-						transposed[4, i + 1] = faceColours[(int) FaceID.Right, 0, i];
-						transposed[i + 1, 4] = faceColours[(int) FaceID.Bottom, i, 0];
-					}
-					transposed = rotateFace(transposed, rot);
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							faceColours[(int) FaceID.Front, i, j] = transposed[i + 1, j + 1];
-					for(int i = 0; i < 3; i++) {
-						faceColours[(int) FaceID.Top, i, 2] = transposed[i + 1, 0];
-						faceColours[(int) FaceID.Left, 2, i] = transposed[0, i + 1];
-						faceColours[(int) FaceID.Right, 0, i] = transposed[4, i + 1];
-						faceColours[(int) FaceID.Bottom, i, 0] = transposed[i + 1, 4];
-					}
-					break;
-				case FaceID.Right:
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							transposed[i + 1, j + 1] = faceColours[(int) FaceID.Right, i, j];
-					for(int i = 0; i < 3; i++) {
-						transposed[i + 1, 0] = faceColours[(int) FaceID.Top, 2, 2 - i];
-						transposed[0, i + 1] = faceColours[(int) FaceID.Front, 2, i];
-						transposed[4, i + 1] = faceColours[(int) FaceID.Back, 0, i];
-						transposed[i + 1, 4] = faceColours[(int) FaceID.Bottom, 2, i];
-					}
-					transposed = rotateFace(transposed, rot);
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							faceColours[(int) FaceID.Right, i, j] = transposed[i + 1, j + 1];
-					for(int i = 0; i < 3; i++) {
-						faceColours[(int) FaceID.Top, 2, 2 - i] = transposed[i + 1, 0];
-						faceColours[(int) FaceID.Front, 2, i] = transposed[0, i + 1];
-						faceColours[(int) FaceID.Back, 0, i] = transposed[4, i + 1];
-						faceColours[(int) FaceID.Bottom, 2, i] = transposed[i + 1, 4];
+					switch(coords.face) {
+						case FaceID.Front:
+							newCoords.face = FaceID.Top;
+							break;
+						case FaceID.Back:
+							newCoords.face = FaceID.Bottom;
+							newCoords.i = 2 - coords.i;
+							newCoords.j = 2 - coords.j;
+							break;
+						case FaceID.Left:
+							newCoords.i = coords.j;
+							newCoords.j = 2 - coords.i;
+							break;
+						case FaceID.Right:
+							newCoords.i = 2 - coords.j;
+							newCoords.j = coords.i;
+							break;
+						case FaceID.Top:
+							newCoords.face = FaceID.Back;
+							newCoords.i = 2 - coords.i;
+							newCoords.j = 2 - coords.j;
+							break;
+						case FaceID.Bottom:
+							newCoords.face = FaceID.Front;
+							break;
 					}
 					break;
 				case FaceID.Bottom:
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							transposed[i + 1, j + 1] = faceColours[(int) FaceID.Bottom, i, j];
-					for(int i = 0; i < 3; i++) {
-						transposed[i + 1, 0] = faceColours[(int) FaceID.Front, i, 2];
-						transposed[0, i + 1] = faceColours[(int) FaceID.Left, 2 - i, 2];
-						transposed[4, i + 1] = faceColours[(int) FaceID.Right, i, 2];
-						transposed[i + 1, 4] = faceColours[(int) FaceID.Back, 2 - i, 2];
-					}
-					transposed = rotateFace(transposed, rot);
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							faceColours[(int) FaceID.Bottom, i, j] = transposed[i + 1, j + 1];
-					for(int i = 0; i < 3; i++) {
-						faceColours[(int) FaceID.Front, i, 2] = transposed[i + 1, 0];
-						faceColours[(int) FaceID.Left, 2 - i, 2] = transposed[0, i + 1];
-						faceColours[(int) FaceID.Right, i, 2] = transposed[4, i + 1];
-						faceColours[(int) FaceID.Back, 2 - i, 2] = transposed[i + 1, 4];
+					switch(coords.face) {
+						case FaceID.Front:
+							newCoords.face = FaceID.Bottom;
+							break;
+						case FaceID.Back:
+							newCoords.face = FaceID.Top;
+							newCoords.i = 2 - coords.i;
+							newCoords.j = 2 - coords.j;
+							break;
+						case FaceID.Left:
+							newCoords.i = 2 - coords.j;
+							newCoords.j = coords.i;
+							break;
+						case FaceID.Right:
+							newCoords.i = coords.j;
+							newCoords.j = 2 - coords.i;
+							break;
+						case FaceID.Top:
+							newCoords.face = FaceID.Front;
+							break;
+						case FaceID.Bottom:
+							newCoords.face = FaceID.Back;
+							newCoords.i = 2 - coords.i;
+							newCoords.j = 2 - coords.j;
+							break;
 					}
 					break;
-				case FaceID.Back:
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							transposed[i + 1, j + 1] = faceColours[(int) FaceID.Back, i, j];
-					for(int i = 0; i < 3; i++) {
-						transposed[i + 1, 0] = faceColours[(int) FaceID.Top, 2 - i, 0];
-						transposed[0, i + 1] = faceColours[(int) FaceID.Right, 2, i];
-						transposed[4, i + 1] = faceColours[(int) FaceID.Left, 0, i];
-						transposed[i + 1, 4] = faceColours[(int) FaceID.Bottom, 2 - i, 2];
+				case FaceID.Left:
+					switch(coords.face) {
+						case FaceID.Front:
+							newCoords.face = FaceID.Left;
+							break;
+						case FaceID.Back:
+							newCoords.face = FaceID.Right;
+							break;
+						case FaceID.Left:
+							newCoords.face = FaceID.Back;
+							break;
+						case FaceID.Right:
+							newCoords.face = FaceID.Front;
+							break;
+						case FaceID.Top:
+							newCoords.i = 2 - coords.j;
+							newCoords.j = coords.i;
+							break;
+						case FaceID.Bottom:
+							newCoords.i = coords.j;
+							newCoords.j = 2 - coords.i;
+							break;
 					}
-					transposed = rotateFace(transposed, rot);
-					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-							faceColours[(int) FaceID.Back, i, j] = transposed[i + 1, j + 1];
-					for(int i = 0; i < 3; i++) {
-						faceColours[(int) FaceID.Top, 2 - i, 0] = transposed[i + 1, 0];
-						faceColours[(int) FaceID.Right, 2, i] = transposed[0, i + 1];
-						faceColours[(int) FaceID.Left, 0, i] = transposed[4, i + 1];
-						faceColours[(int) FaceID.Bottom, 2 - i, 2] = transposed[i + 1, 4];
+					break;
+				case FaceID.Right:
+					switch(coords.face) {
+						case FaceID.Front:
+							newCoords.face = FaceID.Right;
+							break;
+						case FaceID.Back:
+							newCoords.face = FaceID.Left;
+							break;
+						case FaceID.Left:
+							newCoords.face = FaceID.Front;
+							break;
+						case FaceID.Right:
+							newCoords.face = FaceID.Back;
+							break;
+						case FaceID.Top:
+							newCoords.i = coords.j;
+							newCoords.j = 2 - coords.i;
+							break;
+						case FaceID.Bottom:
+							newCoords.i = 2 - coords.j;
+							newCoords.j = coords.i;
+							break;
+					}
+					break;
+				case FaceID.Front:
+					return coords;
+				case FaceID.Back:
+					switch(coords.face) {
+						case FaceID.Front:
+							newCoords.face = FaceID.Back;
+							break;
+						case FaceID.Back:
+							newCoords.face = FaceID.Front;
+							break;
+						case FaceID.Left:
+							newCoords.face = FaceID.Right;
+							break;
+						case FaceID.Right:
+							newCoords.face = FaceID.Left;
+							break;
+						case FaceID.Top:
+							newCoords.i = 2 - coords.i;
+							newCoords.j = 2 - coords.j;
+							break;
+						case FaceID.Bottom:
+							newCoords.i = 2 - coords.i;
+							newCoords.j = 2 - coords.j;
+							break;
 					}
 					break;
 			}
+			return newCoords;
 		}
 	}
 }

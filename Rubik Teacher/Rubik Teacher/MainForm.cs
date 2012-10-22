@@ -21,16 +21,14 @@ namespace Rubik_Teacher {
 			
 
 			List<FaceID> facesChanged = new List<FaceID>();
+			Move lastMove = new Move(FaceID.Top, CubeMove.Clockwise);
 			for(int i = 0; i < shuffleInput.Value; i++) {
 				FaceID changed = (FaceID) rand.Next(6);
-				if(!facesChanged.Contains(changed)) facesChanged.Add(changed);
-				rubikTeacher.cube.performMove(changed, (CubeMove) rand.Next(3));
-			}
-			foreach(FaceID face in facesChanged) {
-				rubikTeacher.verticesChanged[(int) face] = true;
-				for(int i = 0; i < 6; i++)
-					if(rubikTeacher.areAdjacent(face, (FaceID) i))
-						rubikTeacher.verticesChanged[i] = true;
+				while(changed == lastMove.face) changed = (FaceID) rand.Next(6);
+				CubeMove cmove = (CubeMove) rand.Next(3);
+				lastMove.face = changed;
+				lastMove.twist = cmove;
+				rubikTeacher.performMove(changed, cmove);
 			}
 		}
 
@@ -53,17 +51,9 @@ namespace Rubik_Teacher {
 						console.AppendText("Invalid move: " + m + "\n");
 						return;
 					}
-				List<FaceID> facesChanged = new List<FaceID>();
 				foreach(string m in moves) {
 					FaceID changed = rubikTeacher.cube.toMove(m).face;
-					if(!facesChanged.Contains(changed)) facesChanged.Add(changed);
-					rubikTeacher.cube.performMove(m);
-				}
-				foreach(FaceID face in facesChanged) {
-					rubikTeacher.verticesChanged[(int) face] = true;
-					for(int i = 0; i < 6; i++)
-						if(rubikTeacher.areAdjacent(face, (FaceID) i))
-							rubikTeacher.verticesChanged[i] = true;
+					rubikTeacher.performMove(m);
 				}
 
 				console.AppendText("Performed moves: " + parsed + "\n");
@@ -71,8 +61,9 @@ namespace Rubik_Teacher {
 			}
 		}
 
-		private void undoButton_Click(object sender, EventArgs e) {
-
+		private void animatedFacesButton_Click(object sender, EventArgs e) {
+			animatedFacesButton.Checked = !animatedFacesButton.Checked;
+			rubikTeacher.animateFaces = animatedFacesButton.Checked;
 		}
 	}
 }
