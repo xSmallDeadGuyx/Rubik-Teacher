@@ -60,21 +60,6 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevComponents.DotNetBar.Design">
-      <HintPath>..\..\..\Downloads\dnb\dnb\DevComponents.DotNetBar.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="DevComponents.DotNetBar2">
-      <HintPath>..\..\..\Downloads\dnb\dnb\DevComponents.DotNetBar2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevComponents.Instrumentation">
-      <HintPath>..\..\..\Downloads\dnb\dnb\DevComponents.Instrumentation.dll</HintPath>
-    </Reference>
-    <Reference Include="DevComponents.Instrumentation.Design">
-      <HintPath>..\..\..\Downloads\dnb\dnb\DevComponents.Instrumentation.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="DevComponents.TreeGX">
-      <HintPath>..\..\..\Downloads\dnb\dnb\DevComponents.TreeGX.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>

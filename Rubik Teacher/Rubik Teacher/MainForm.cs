@@ -6,11 +6,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using DevComponents.DotNetBar;
 using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework;
 
 namespace Rubik_Teacher {
-	public partial class MainForm : Office2007RibbonForm {
+	public partial class MainForm : Form {
 
 		public MainForm() {
 			InitializeComponent();
@@ -33,37 +33,22 @@ namespace Rubik_Teacher {
 		}
 
 		private void showNetButton_Click(object sender, EventArgs e) {
-			showNetButton.Checked = !showNetButton.Checked;
-		}
-
-		private void consoleInput_KeyPress(object sender, KeyPressEventArgs e) {
-			if(e.KeyChar == '\r' && consoleInput.Text != string.Empty) {
-				if(!Regex.IsMatch(consoleInput.Text.ToUpper(), "^\\s*([" + rubikTeacher.cube.validStringCharacters + "]{1,2}\\s+)*[" + rubikTeacher.cube.validStringCharacters + "]{1,2}\\s*$")) {
-					console.AppendText("Cannot understand move list: " + consoleInput.Text + "\n");
-					return;
-				}
-				String parsed = Regex.Replace(consoleInput.Text.ToUpper().Trim(), "\\s+", " ");
-				string[] moves = parsed.Split(' ');
-				List<string> performed = new List<string>();
-				List<string> invalid = new List<string>();
-				foreach(string m in moves)
-					if(!rubikTeacher.cube.isValidMove(m)) {
-						console.AppendText("Invalid move: " + m + "\n");
-						return;
-					}
-				foreach(string m in moves) {
-					FaceID changed = rubikTeacher.cube.toMove(m).face;
-					rubikTeacher.performMove(m);
-				}
-
-				console.AppendText("Performed moves: " + parsed + "\n");
-				consoleInput.Text = "";
-			}
+			rubikTeacher.showNet = !rubikTeacher.showNet;
+			showNetButton.Text = rubikTeacher.showNet ? "Hide Net" : "Show Net";
 		}
 
 		private void animatedFacesButton_Click(object sender, EventArgs e) {
-			animatedFacesButton.Checked = !animatedFacesButton.Checked;
-			rubikTeacher.animateFaces = animatedFacesButton.Checked;
+			rubikTeacher.animateFaces = !rubikTeacher.animateFaces;
+			animatedFacesButton.Text = rubikTeacher.animateFaces ? "Hide Rotate Animation" : "Show Rotate Animation";
+		}
+
+		private void pauseButton_Click(object sender, EventArgs e) {
+			rubikTeacher.paused = !rubikTeacher.paused;
+			pauseButton.Text = rubikTeacher.paused ? "Resume" : "Pause";
+		}
+
+		private void rotateSpeedSlider_ValueChanged(object sender, EventArgs e) {
+			rubikTeacher.rotatePerStep = MathHelper.PiOver4 * rotateSpeedSlider.Value / 500.0F;
 		}
 	}
 }

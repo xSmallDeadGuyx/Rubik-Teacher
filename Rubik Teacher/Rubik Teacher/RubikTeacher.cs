@@ -25,6 +25,8 @@ namespace Rubik_Teacher {
 		private KeyboardState prevKb = new KeyboardState();
 		private Point prevMs = new Point();
 
+		public Color bgColor = Color.CornflowerBlue;
+
 		public Cube cube;
 		public float angleX = 0.0F;
 		public float angleY = 0.0F;
@@ -36,12 +38,15 @@ namespace Rubik_Teacher {
 
 		public Random rand = new Random();
 
+		public bool showNet = true;
+
 		public FaceID rotatingFace = FaceID.Top;
 		public Move lastMove;
 		public float faceAngle = 0.0F;
-		public float rotatePerStep = MathHelper.PiOver2 / 200.0F;
+		public float rotatePerStep = MathHelper.PiOver4 / 100.0F;
 		public float rotatingTo = MathHelper.PiOver2;
 		public bool rotatingBackwards = false;
+		public bool paused = false;
 
 		public bool animateFaces = true;
 		public int performDelay = 100;
@@ -53,7 +58,6 @@ namespace Rubik_Teacher {
 		public Queue<Move> moveQueue = new Queue<Move>();
 
 		protected override void Initialize() {
-			timer = Stopwatch.StartNew();
 			Application.Idle += delegate { Invalidate(); };
 
 			content = new ContentManager(Services, "Content");
@@ -90,47 +94,50 @@ namespace Rubik_Teacher {
 		}
 
 		protected void update() {
-			if(moveQueue.Count > 0 && delaySoFar == 0 && faceAngle <= 0.0F) {
-				Move move = moveQueue.Dequeue();
-				delaySoFar = performDelay;
-				if(animateFaces) {
+			projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1.0f, 300.0f);
+			if(!paused) {
+				if(moveQueue.Count > 0 && delaySoFar == 0 && faceAngle <= 0.0F) {
+					Move move = moveQueue.Dequeue();
+					delaySoFar = performDelay;
+					if(animateFaces) {
+						verticesChanged[(int) lastMove.face] = true;
+						for(int i = 0; i < 6; i++)
+							if(areAdjacent(lastMove.face, (FaceID) i))
+								verticesChanged[i] = true;
+
+						rotatingBackwards = move.twist == CubeMove.AntiClockwise;
+						rotatingFace = move.face;
+						faceAngle = rotatePerStep;
+						if(move.twist == CubeMove.Double) rotatingTo = MathHelper.Pi;
+						else rotatingTo = MathHelper.PiOver2;
+						lastMove = move;
+					}
+					else {
+						verticesChanged[(int) lastMove.face] = true;
+						for(int i = 0; i < 6; i++)
+							if(areAdjacent(lastMove.face, (FaceID) i))
+								verticesChanged[i] = true;
+						cube.performMove(move);
+					}
+				}
+				if(delaySoFar > 0) delaySoFar--;
+				if(faceAngle > 0.0F) {
 					verticesChanged[(int) lastMove.face] = true;
 					for(int i = 0; i < 6; i++)
 						if(areAdjacent(lastMove.face, (FaceID) i))
 							verticesChanged[i] = true;
 
-					rotatingBackwards = move.twist == CubeMove.AntiClockwise;
-					rotatingFace = move.face;
-					faceAngle = rotatePerStep;
-					if(move.twist == CubeMove.Double) rotatingTo = MathHelper.Pi;
-					else rotatingTo = MathHelper.PiOver2;
-					lastMove = move;
+					faceAngle += rotatePerStep;
 				}
-				else {
+				if(faceAngle >= rotatingTo) {
 					verticesChanged[(int) lastMove.face] = true;
 					for(int i = 0; i < 6; i++)
 						if(areAdjacent(lastMove.face, (FaceID) i))
 							verticesChanged[i] = true;
-					cube.performMove(move);
+
+					faceAngle = 0.0F;
+					cube.performMove(lastMove);
 				}
-			}
-			if(delaySoFar > 0) delaySoFar--;
-			if(faceAngle > 0.0F) {
-				verticesChanged[(int) lastMove.face] = true;
-				for(int i = 0; i < 6; i++)
-					if(areAdjacent(lastMove.face, (FaceID) i))
-						verticesChanged[i] = true;
-
-				faceAngle += rotatePerStep;
-			}
-			if(faceAngle >= rotatingTo) {
-				verticesChanged[(int) lastMove.face] = true;
-				for(int i = 0; i < 6; i++)
-					if(areAdjacent(lastMove.face, (FaceID) i))
-						verticesChanged[i] = true;
-
-				faceAngle = 0.0F;
-				cube.performMove(lastMove);
 			}
 
 			KeyboardState kb = Keyboard.GetState();
@@ -138,7 +145,7 @@ namespace Rubik_Teacher {
 
 			Point vms = this.PointToClient(new Point(ms.X, ms.Y));
 
-			if(ms.LeftButton == ButtonState.Pressed) {
+			if(ms.LeftButton == ButtonState.Pressed && inBounds(vms) && inBounds(prevMs)) {
 				angleX += (vms.Y - prevMs.Y) * 0.01F;
 				angleY += (prevMs.X - vms.X) * 0.01F;
 			}
@@ -156,9 +163,9 @@ namespace Rubik_Teacher {
 		protected override void Draw() {
 			try {
 				update();
-				GraphicsDevice.Clear(Color.CornflowerBlue);
+				GraphicsDevice.Clear(bgColor);
 
-				if(Program.form.showNetButton.Checked) {
+				if(showNet) {
 					spriteBatch.Begin();
 					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) {
 							spriteBatch.Draw(texture, new Rectangle(48 + i * 16, j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Top, i, j]]);
