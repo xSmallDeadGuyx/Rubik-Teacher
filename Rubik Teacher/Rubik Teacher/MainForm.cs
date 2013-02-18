@@ -18,7 +18,6 @@ namespace Rubik_Teacher {
 
 		private void shuffleButton_Click(object sender, EventArgs e) {
 			Random rand = new Random();
-			
 
 			List<FaceID> facesChanged = new List<FaceID>();
 			Move lastMove = new Move(FaceID.Top, CubeMove.Clockwise);
@@ -49,6 +48,36 @@ namespace Rubik_Teacher {
 
 		private void rotateSpeedSlider_ValueChanged(object sender, EventArgs e) {
 			rubikTeacher.rotatePerStep = MathHelper.PiOver4 * rotateSpeedSlider.Value / 500.0F;
+		}
+
+		private void MainForm_Load(object sender, EventArgs e) {
+			this.tutorial = new Tutorial(this);
+			rubikTeacher.bgColor = new Microsoft.Xna.Framework.Color(BackColor.R, BackColor.G, BackColor.B);
+		}
+
+		private void previousStageButton_Click(object sender, EventArgs e) {
+			previousStageButton.Enabled = tutorial.previousStage();
+			nextStageButton.Enabled = true;
+		}
+
+		private void nextStageButton_Click(object sender, EventArgs e) {
+			nextStageButton.Enabled = tutorial.nextStage();
+			previousStageButton.Enabled = true;
+		}
+
+		private void playStageButton_Click(object sender, EventArgs e) {
+			string[] moves = tutorial.moves[(int) tutorial.stage].Split(' ');
+			foreach(string move in moves)
+				rubikTeacher.performMove(move);
+		}
+
+		private void debugIn_KeyPress(object sender, KeyPressEventArgs e) {
+			if(e.KeyChar == (char)13) {
+				string[] moves = debugIn.Text.ToUpper().Split(' ');
+				foreach(string move in moves)
+					rubikTeacher.performMove(move);
+				debugIn.Text = "";
+			}
 		}
 	}
 }

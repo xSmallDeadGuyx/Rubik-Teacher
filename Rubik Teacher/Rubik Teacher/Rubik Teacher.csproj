@@ -129,6 +129,7 @@
     <Compile Include="RubikTeacher.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Tutorial.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

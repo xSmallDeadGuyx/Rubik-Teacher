@@ -5,6 +5,7 @@ namespace Rubik_Teacher {
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
+		public Tutorial tutorial;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -25,6 +26,7 @@ namespace Rubik_Teacher {
 		/// </summary>
 		private void InitializeComponent() {
 			this.consolePanel = new System.Windows.Forms.Panel();
+			this.speedLabel = new System.Windows.Forms.Label();
 			this.rotateSpeedSlider = new System.Windows.Forms.TrackBar();
 			this.animatedFacesButton = new System.Windows.Forms.Button();
 			this.displayPanel = new System.Windows.Forms.Panel();
@@ -34,20 +36,26 @@ namespace Rubik_Teacher {
 			this.movesLabel = new System.Windows.Forms.Label();
 			this.shuffleButton = new System.Windows.Forms.Button();
 			this.shuffleInput = new System.Windows.Forms.NumericUpDown();
-			this.renderPanel = new System.Windows.Forms.Panel();
 			this.mainTabControl = new System.Windows.Forms.TabControl();
 			this.cubeControlPage = new System.Windows.Forms.TabPage();
-			this.solverPage = new System.Windows.Forms.TabPage();
-			this.speedLabel = new System.Windows.Forms.Label();
+			this.tutorialPage = new System.Windows.Forms.TabPage();
+			this.playStageButton = new System.Windows.Forms.Button();
+			this.tutorialTextbox = new System.Windows.Forms.TextBox();
+			this.nextStageButton = new System.Windows.Forms.Button();
+			this.previousStageButton = new System.Windows.Forms.Button();
+			this.debugTab = new System.Windows.Forms.TabPage();
+			this.debugIn = new System.Windows.Forms.TextBox();
+			this.debugOut = new System.Windows.Forms.TextBox();
 			this.rubikTeacher = new Rubik_Teacher.RubikTeacher();
 			this.consolePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.rotateSpeedSlider)).BeginInit();
 			this.displayPanel.SuspendLayout();
 			this.shufflePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.shuffleInput)).BeginInit();
-			this.renderPanel.SuspendLayout();
 			this.mainTabControl.SuspendLayout();
 			this.cubeControlPage.SuspendLayout();
+			this.tutorialPage.SuspendLayout();
+			this.debugTab.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// consolePanel
@@ -63,10 +71,17 @@ namespace Rubik_Teacher {
 			this.consolePanel.Size = new System.Drawing.Size(374, 107);
 			this.consolePanel.TabIndex = 2;
 			// 
+			// speedLabel
+			// 
+			this.speedLabel.AutoSize = true;
+			this.speedLabel.Location = new System.Drawing.Point(12, 84);
+			this.speedLabel.Name = "speedLabel";
+			this.speedLabel.Size = new System.Drawing.Size(49, 17);
+			this.speedLabel.TabIndex = 3;
+			this.speedLabel.Text = "Speed";
+			// 
 			// rotateSpeedSlider
 			// 
-			this.rotateSpeedSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this.rotateSpeedSlider.AutoSize = false;
 			this.rotateSpeedSlider.BackColor = System.Drawing.Color.White;
 			this.rotateSpeedSlider.Location = new System.Drawing.Point(68, 81);
@@ -84,8 +99,6 @@ namespace Rubik_Teacher {
 			// animatedFacesButton
 			// 
 			this.animatedFacesButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
-			this.animatedFacesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this.animatedFacesButton.Location = new System.Drawing.Point(4, 4);
 			this.animatedFacesButton.Margin = new System.Windows.Forms.Padding(4);
 			this.animatedFacesButton.Name = "animatedFacesButton";
@@ -181,23 +194,13 @@ namespace Rubik_Teacher {
             0,
             0});
 			// 
-			// renderPanel
-			// 
-			this.renderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.renderPanel.Controls.Add(this.rubikTeacher);
-			this.renderPanel.Location = new System.Drawing.Point(12, 163);
-			this.renderPanel.Margin = new System.Windows.Forms.Padding(4);
-			this.renderPanel.Name = "renderPanel";
-			this.renderPanel.Padding = new System.Windows.Forms.Padding(5);
-			this.renderPanel.Size = new System.Drawing.Size(804, 357);
-			this.renderPanel.TabIndex = 2;
-			// 
 			// mainTabControl
 			// 
+			this.mainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.mainTabControl.Controls.Add(this.cubeControlPage);
-			this.mainTabControl.Controls.Add(this.solverPage);
+			this.mainTabControl.Controls.Add(this.tutorialPage);
+			this.mainTabControl.Controls.Add(this.debugTab);
 			this.mainTabControl.Location = new System.Drawing.Point(12, 12);
 			this.mainTabControl.Name = "mainTabControl";
 			this.mainTabControl.SelectedIndex = 0;
@@ -217,57 +220,132 @@ namespace Rubik_Teacher {
 			this.cubeControlPage.Text = "Cube Controls";
 			this.cubeControlPage.UseVisualStyleBackColor = true;
 			// 
-			// solverPage
+			// tutorialPage
 			// 
-			this.solverPage.Location = new System.Drawing.Point(4, 25);
-			this.solverPage.Name = "solverPage";
-			this.solverPage.Padding = new System.Windows.Forms.Padding(3);
-			this.solverPage.Size = new System.Drawing.Size(797, 115);
-			this.solverPage.TabIndex = 1;
-			this.solverPage.Text = "Solver";
-			this.solverPage.UseVisualStyleBackColor = true;
+			this.tutorialPage.Controls.Add(this.playStageButton);
+			this.tutorialPage.Controls.Add(this.tutorialTextbox);
+			this.tutorialPage.Controls.Add(this.nextStageButton);
+			this.tutorialPage.Controls.Add(this.previousStageButton);
+			this.tutorialPage.Location = new System.Drawing.Point(4, 25);
+			this.tutorialPage.Name = "tutorialPage";
+			this.tutorialPage.Padding = new System.Windows.Forms.Padding(3);
+			this.tutorialPage.Size = new System.Drawing.Size(797, 115);
+			this.tutorialPage.TabIndex = 1;
+			this.tutorialPage.Text = "Tutorial";
+			this.tutorialPage.UseVisualStyleBackColor = true;
 			// 
-			// speedLabel
+			// playStageButton
 			// 
-			this.speedLabel.AutoSize = true;
-			this.speedLabel.Location = new System.Drawing.Point(12, 84);
-			this.speedLabel.Name = "speedLabel";
-			this.speedLabel.Size = new System.Drawing.Size(49, 17);
-			this.speedLabel.TabIndex = 3;
-			this.speedLabel.Text = "Speed";
+			this.playStageButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.playStageButton.Location = new System.Drawing.Point(87, 81);
+			this.playStageButton.Name = "playStageButton";
+			this.playStageButton.Size = new System.Drawing.Size(623, 28);
+			this.playStageButton.TabIndex = 3;
+			this.playStageButton.Text = "Play Stage";
+			this.playStageButton.UseVisualStyleBackColor = true;
+			this.playStageButton.Click += new System.EventHandler(this.playStageButton_Click);
+			// 
+			// tutorialTextbox
+			// 
+			this.tutorialTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tutorialTextbox.Location = new System.Drawing.Point(87, 6);
+			this.tutorialTextbox.Multiline = true;
+			this.tutorialTextbox.Name = "tutorialTextbox";
+			this.tutorialTextbox.ReadOnly = true;
+			this.tutorialTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.tutorialTextbox.Size = new System.Drawing.Size(623, 72);
+			this.tutorialTextbox.TabIndex = 2;
+			// 
+			// nextStageButton
+			// 
+			this.nextStageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.nextStageButton.Location = new System.Drawing.Point(716, 6);
+			this.nextStageButton.Name = "nextStageButton";
+			this.nextStageButton.Size = new System.Drawing.Size(75, 103);
+			this.nextStageButton.TabIndex = 1;
+			this.nextStageButton.Text = "Next";
+			this.nextStageButton.UseVisualStyleBackColor = true;
+			this.nextStageButton.Click += new System.EventHandler(this.nextStageButton_Click);
+			// 
+			// previousStageButton
+			// 
+			this.previousStageButton.Enabled = false;
+			this.previousStageButton.Location = new System.Drawing.Point(6, 6);
+			this.previousStageButton.Name = "previousStageButton";
+			this.previousStageButton.Size = new System.Drawing.Size(75, 103);
+			this.previousStageButton.TabIndex = 0;
+			this.previousStageButton.Text = "Previous";
+			this.previousStageButton.UseVisualStyleBackColor = true;
+			this.previousStageButton.Click += new System.EventHandler(this.previousStageButton_Click);
+			// 
+			// debugTab
+			// 
+			this.debugTab.Controls.Add(this.debugIn);
+			this.debugTab.Controls.Add(this.debugOut);
+			this.debugTab.Location = new System.Drawing.Point(4, 25);
+			this.debugTab.Name = "debugTab";
+			this.debugTab.Padding = new System.Windows.Forms.Padding(3);
+			this.debugTab.Size = new System.Drawing.Size(797, 115);
+			this.debugTab.TabIndex = 2;
+			this.debugTab.Text = "Debugging";
+			this.debugTab.UseVisualStyleBackColor = true;
+			// 
+			// debugIn
+			// 
+			this.debugIn.Location = new System.Drawing.Point(6, 87);
+			this.debugIn.Name = "debugIn";
+			this.debugIn.Size = new System.Drawing.Size(785, 22);
+			this.debugIn.TabIndex = 1;
+			this.debugIn.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.debugIn_KeyPress);
+			// 
+			// debugOut
+			// 
+			this.debugOut.BackColor = System.Drawing.Color.Black;
+			this.debugOut.ForeColor = System.Drawing.Color.White;
+			this.debugOut.Location = new System.Drawing.Point(6, 6);
+			this.debugOut.Multiline = true;
+			this.debugOut.Name = "debugOut";
+			this.debugOut.ReadOnly = true;
+			this.debugOut.Size = new System.Drawing.Size(785, 78);
+			this.debugOut.TabIndex = 0;
 			// 
 			// rubikTeacher
 			// 
 			this.rubikTeacher.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.rubikTeacher.Location = new System.Drawing.Point(0, 0);
+			this.rubikTeacher.Location = new System.Drawing.Point(12, 159);
 			this.rubikTeacher.Margin = new System.Windows.Forms.Padding(0);
 			this.rubikTeacher.Name = "rubikTeacher";
-			this.rubikTeacher.Size = new System.Drawing.Size(804, 357);
+			this.rubikTeacher.Size = new System.Drawing.Size(805, 365);
 			this.rubikTeacher.TabIndex = 0;
 			this.rubikTeacher.Text = "rubikTeacher";
-			this.rubikTeacher.bgColor = new Microsoft.Xna.Framework.Color(this.BackColor.R, this.BackColor.G, this.BackColor.B);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(829, 533);
+			this.Controls.Add(this.rubikTeacher);
 			this.Controls.Add(this.mainTabControl);
-			this.Controls.Add(this.renderPanel);
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "MainForm";
 			this.Text = "Rubik Teacher";
+			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.consolePanel.ResumeLayout(false);
 			this.consolePanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.rotateSpeedSlider)).EndInit();
 			this.displayPanel.ResumeLayout(false);
 			this.shufflePanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.shuffleInput)).EndInit();
-			this.renderPanel.ResumeLayout(false);
 			this.mainTabControl.ResumeLayout(false);
 			this.cubeControlPage.ResumeLayout(false);
+			this.tutorialPage.ResumeLayout(false);
+			this.tutorialPage.PerformLayout();
+			this.debugTab.ResumeLayout(false);
+			this.debugTab.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -280,7 +358,6 @@ namespace Rubik_Teacher {
 		private Label movesLabel;
 		private Button shuffleButton;
 		private NumericUpDown shuffleInput;
-		private Panel renderPanel;
 		private Panel displayPanel;
 		private Button showNetButton;
 		private Panel consolePanel;
@@ -288,7 +365,14 @@ namespace Rubik_Teacher {
 		private Button pauseButton;
 		private TabControl mainTabControl;
 		private TabPage cubeControlPage;
-		private TabPage solverPage;
+		private TabPage tutorialPage;
 		private Label speedLabel;
+		private Button nextStageButton;
+		private Button previousStageButton;
+		public TextBox tutorialTextbox;
+		public Button playStageButton;
+		private TabPage debugTab;
+		private TextBox debugIn;
+		private TextBox debugOut;
 	}
 }

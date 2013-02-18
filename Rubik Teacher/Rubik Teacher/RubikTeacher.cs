@@ -118,6 +118,7 @@ namespace Rubik_Teacher {
 							if(areAdjacent(lastMove.face, (FaceID) i))
 								verticesChanged[i] = true;
 						cube.performMove(move);
+						lastMove = move;
 					}
 				}
 				if(delaySoFar > 0) delaySoFar--;
