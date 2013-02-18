@@ -69,15 +69,28 @@ namespace Rubik_Teacher {
 			string[] moves = tutorial.moves[(int) tutorial.stage].Split(' ');
 			foreach(string move in moves)
 				rubikTeacher.performMove(move);
+			tutorial.resetStage();
 		}
 
 		private void debugIn_KeyPress(object sender, KeyPressEventArgs e) {
 			if(e.KeyChar == (char)13) {
-				string[] moves = debugIn.Text.ToUpper().Split(' ');
-				foreach(string move in moves)
-					rubikTeacher.performMove(move);
+				if(debugIn.Text.ToLower() == "tostr")
+					debugOut.AppendText(rubikTeacher.cube.ToString());
+				else if(debugIn.Text.ToLower().StartsWith("fromstr")) {
+					rubikTeacher.cube.fromString(debugIn.Text.Split(' ')[1]);
+					rubikTeacher.refresh();
+				}
+				else {
+					string[] moves = debugIn.Text.ToUpper().Split(' ');
+					foreach(string move in moves)
+						rubikTeacher.performMove(move);
+				}
 				debugIn.Text = "";
 			}
+		}
+
+		private void tutorialPage_Enter(object sender, EventArgs e) {
+			tutorial.resetStage();
 		}
 	}
 }

@@ -28,8 +28,8 @@ namespace Rubik_Teacher {
 		public Color bgColor = Color.CornflowerBlue;
 
 		public Cube cube;
-		public float angleX = 0.0F;
-		public float angleY = 0.0F;
+		public float angleX = (float) Math.PI / 6.0F;
+		public float angleY = MathHelper.PiOver4;
 
 		public Matrix viewMatrix;
 		public Matrix projectionMatrix;
@@ -87,8 +87,13 @@ namespace Rubik_Teacher {
 			viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, -7), new Vector3(0, 0, 0), new Vector3(0, -1, 0));
 			projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1.0f, 300.0f);
 
+			refresh();
+		}
+
+		public void refresh() {
+			faceVertices.Clear();
 			for(int i = 0; i < 6; i++) {
-				faceVertices.Add(generateFaceVertices((FaceID) i));
+				faceVertices.Add(generateFaceVertices((FaceID)i));
 				verticesChanged[i] = false;
 			}
 		}
@@ -100,9 +105,9 @@ namespace Rubik_Teacher {
 					Move move = moveQueue.Dequeue();
 					delaySoFar = performDelay;
 					if(animateFaces) {
-						verticesChanged[(int) lastMove.face] = true;
+						verticesChanged[(int) move.face] = true;
 						for(int i = 0; i < 6; i++)
-							if(areAdjacent(lastMove.face, (FaceID) i))
+							if(areAdjacent(move.face, (FaceID) i))
 								verticesChanged[i] = true;
 
 						rotatingBackwards = move.twist == CubeMove.AntiClockwise;
@@ -113,9 +118,9 @@ namespace Rubik_Teacher {
 						lastMove = move;
 					}
 					else {
-						verticesChanged[(int) lastMove.face] = true;
+						verticesChanged[(int) move.face] = true;
 						for(int i = 0; i < 6; i++)
-							if(areAdjacent(lastMove.face, (FaceID) i))
+							if(areAdjacent(move.face, (FaceID) i))
 								verticesChanged[i] = true;
 						cube.performMove(move);
 						lastMove = move;

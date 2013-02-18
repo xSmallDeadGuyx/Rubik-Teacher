@@ -233,6 +233,7 @@ namespace Rubik_Teacher {
 			this.tutorialPage.TabIndex = 1;
 			this.tutorialPage.Text = "Tutorial";
 			this.tutorialPage.UseVisualStyleBackColor = true;
+			this.tutorialPage.Enter += new System.EventHandler(this.tutorialPage_Enter);
 			// 
 			// playStageButton
 			// 

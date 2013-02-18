@@ -32,9 +32,31 @@ namespace Rubik_Teacher {
 		public Color[] colourIDs = {Color.Orange, Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.White};
 
 		public Cube() {
+			reset();
+		}
+
+		public void reset() {
 			for(int i = 0; i < 6; i++)
 				for(int x = 0; x < 3; x++) for(int y = 0; y < 3; y++)
-					faceColours[i, x, y] = (FaceID) i;
+						faceColours[i, x, y] = (FaceID) i;
+		}
+
+		public override string ToString() {
+			string str = "";
+			for(int i = 0; i < 6; i++)
+				for(int j = 0; j < 3; j++)
+					for(int k = 0; k < 3; k++)
+						str += "" + ((int)faceColours[i, k, j]);
+			return str;
+		}
+
+		public void fromString(string str) {
+			for(int i = 0; i < 6; i++)
+				for(int j = 0; j < 3; j++)
+					for(int k = 0; k < 3; k++) {
+						faceColours[i, k, j] = (FaceID)(int.Parse(str.Substring(0, 1)));
+						str = str.Remove(0, 1);
+					}
 		}
 
 		public int xFromBottomLeft(int x, int y, int rot) {

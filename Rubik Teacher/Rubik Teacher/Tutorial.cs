@@ -14,9 +14,7 @@ namespace Rubik_Teacher {
 			}
 			set { 
 				_stage = value;
-				form.tutorialTextbox.Text = text[(int) _stage];
-				form.tutorialTextbox.Select(0, 0);
-				form.playStageButton.Enabled = _stage > 0;
+				resetStage();
 			}
 		}
 		private Stage _stage;
@@ -28,7 +26,12 @@ namespace Rubik_Teacher {
 
 		public string[] moves = {
 			"",
-			"D F'"
+			"D 2F"
+		};
+
+		public string[] position = {
+			"",
+			"345303215533012442153322004125032013144045042012155154"
 		};
 
 		public Tutorial(MainForm f) {
@@ -45,6 +48,17 @@ namespace Rubik_Teacher {
 			if((int) stage < text.Length - 1)
 				stage = (Stage) ((int) stage + 1);
 			return (int) stage < text.Length - 1;
+		}
+
+		public void resetStage() {
+			form.tutorialTextbox.Text = text[(int) stage];
+			form.tutorialTextbox.Select(0, 0);
+			form.playStageButton.Enabled = stage > 0;
+
+			if(stage > 0) {
+				form.rubikTeacher.cube.fromString(position[(int) stage]);
+				form.rubikTeacher.refresh();
+			}
 		}
 	}
 }
