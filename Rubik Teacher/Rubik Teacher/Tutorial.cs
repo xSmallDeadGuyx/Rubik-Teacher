@@ -51,9 +51,17 @@ namespace Rubik_Teacher {
 		}
 
 		public void resetStage() {
-			form.tutorialTextbox.Text = text[(int) stage];
+			form.tutorialTextbox.Text = ((int) stage + 1) + " of " + text.Length + ": " + text[(int) stage];
 			form.tutorialTextbox.Select(0, 0);
-			form.playStageButton.Enabled = stage > 0;
+
+			if(stage > 0) {
+				form.playStageButton.Enabled = true;
+				form.playStageButton.Text = "Play sequence: " + moves[(int)stage];
+			}
+			else {
+				form.playStageButton.Enabled = false;
+				form.playStageButton.Text = "No sequences for this stage";
+			}
 
 			if(stage > 0) {
 				form.rubikTeacher.cube.fromString(position[(int) stage]);

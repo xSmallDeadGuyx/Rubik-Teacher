@@ -92,5 +92,13 @@ namespace Rubik_Teacher {
 		private void tutorialPage_Enter(object sender, EventArgs e) {
 			tutorial.resetStage();
 		}
+
+		private void rubikTeacher_MouseWheel(object sender, MouseEventArgs e) {
+			rubikTeacher.zoom += e.Delta / 120;
+			if(rubikTeacher.zoom > 0)
+				rubikTeacher.zoom = 0;
+			if(rubikTeacher.zoom < -10)
+				rubikTeacher.zoom = -10;
+		}
 	}
 }

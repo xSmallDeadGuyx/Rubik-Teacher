@@ -52,6 +52,8 @@ namespace Rubik_Teacher {
 		public int performDelay = 100;
 		public int delaySoFar = 0;
 
+		public int zoom = 0;
+
 		public bool[] verticesChanged = new bool[6];
 		public List<VertexPositionColorTexture[]> faceVertices = new List<VertexPositionColorTexture[]>();
 
@@ -84,7 +86,7 @@ namespace Rubik_Teacher {
 
 			cube = new Cube();
 
-			viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, -7), new Vector3(0, 0, 0), new Vector3(0, -1, 0));
+			viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, -7 + zoom), new Vector3(0, 0, 0), new Vector3(0, -1, 0));
 			projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1.0f, 300.0f);
 
 			refresh();
@@ -99,7 +101,9 @@ namespace Rubik_Teacher {
 		}
 
 		protected void update() {
+			viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, -7 + zoom), new Vector3(0, 0, 0), new Vector3(0, -1, 0));
 			projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1.0f, 300.0f);
+
 			if(!paused) {
 				if(moveQueue.Count > 0 && delaySoFar == 0 && faceAngle <= 0.0F) {
 					Move move = moveQueue.Dequeue();
@@ -152,8 +156,8 @@ namespace Rubik_Teacher {
 			Point vms = this.PointToClient(new Point(ms.X, ms.Y));
 
 			if(ms.LeftButton == ButtonState.Pressed && inBounds(vms) && inBounds(prevMs)) {
-				angleX += (vms.Y - prevMs.Y) * 0.01F;
-				angleY += (prevMs.X - vms.X) * 0.01F;
+				angleX += (vms.Y - prevMs.Y) * 0.01F / (float) Height * 365F;
+				angleY += (prevMs.X - vms.X) * 0.01F / (float) Width * 805F;
 			}
 			if(angleX > MathHelper.PiOver2) angleX = MathHelper.PiOver2;
 			if(angleX < -MathHelper.PiOver2) angleX = -MathHelper.PiOver2;

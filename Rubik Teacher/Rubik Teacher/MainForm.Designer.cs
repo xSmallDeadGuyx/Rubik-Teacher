@@ -60,21 +60,19 @@ namespace Rubik_Teacher {
 			// 
 			// consolePanel
 			// 
-			this.consolePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this.consolePanel.Controls.Add(this.speedLabel);
 			this.consolePanel.Controls.Add(this.rotateSpeedSlider);
 			this.consolePanel.Controls.Add(this.animatedFacesButton);
-			this.consolePanel.Location = new System.Drawing.Point(416, 4);
+			this.consolePanel.Location = new System.Drawing.Point(531, 4);
 			this.consolePanel.Margin = new System.Windows.Forms.Padding(4);
 			this.consolePanel.Name = "consolePanel";
-			this.consolePanel.Size = new System.Drawing.Size(374, 107);
+			this.consolePanel.Size = new System.Drawing.Size(258, 107);
 			this.consolePanel.TabIndex = 2;
 			// 
 			// speedLabel
 			// 
 			this.speedLabel.AutoSize = true;
-			this.speedLabel.Location = new System.Drawing.Point(12, 84);
+			this.speedLabel.Location = new System.Drawing.Point(8, 81);
 			this.speedLabel.Name = "speedLabel";
 			this.speedLabel.Size = new System.Drawing.Size(49, 17);
 			this.speedLabel.TabIndex = 3;
@@ -82,14 +80,16 @@ namespace Rubik_Teacher {
 			// 
 			// rotateSpeedSlider
 			// 
+			this.rotateSpeedSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.rotateSpeedSlider.AutoSize = false;
 			this.rotateSpeedSlider.BackColor = System.Drawing.Color.White;
-			this.rotateSpeedSlider.Location = new System.Drawing.Point(68, 81);
+			this.rotateSpeedSlider.Location = new System.Drawing.Point(59, 81);
 			this.rotateSpeedSlider.Margin = new System.Windows.Forms.Padding(4);
 			this.rotateSpeedSlider.Maximum = 9;
 			this.rotateSpeedSlider.Minimum = 1;
 			this.rotateSpeedSlider.Name = "rotateSpeedSlider";
-			this.rotateSpeedSlider.Size = new System.Drawing.Size(302, 22);
+			this.rotateSpeedSlider.Size = new System.Drawing.Size(195, 22);
 			this.rotateSpeedSlider.TabIndex = 2;
 			this.rotateSpeedSlider.Text = "Speed";
 			this.rotateSpeedSlider.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -99,10 +99,12 @@ namespace Rubik_Teacher {
 			// animatedFacesButton
 			// 
 			this.animatedFacesButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
+			this.animatedFacesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.animatedFacesButton.Location = new System.Drawing.Point(4, 4);
 			this.animatedFacesButton.Margin = new System.Windows.Forms.Padding(4);
 			this.animatedFacesButton.Name = "animatedFacesButton";
-			this.animatedFacesButton.Size = new System.Drawing.Size(366, 73);
+			this.animatedFacesButton.Size = new System.Drawing.Size(250, 73);
 			this.animatedFacesButton.TabIndex = 1;
 			this.animatedFacesButton.Text = "Hide Rotate Animations";
 			this.animatedFacesButton.Click += new System.EventHandler(this.animatedFacesButton_Click);
@@ -111,19 +113,21 @@ namespace Rubik_Teacher {
 			// 
 			this.displayPanel.Controls.Add(this.pauseButton);
 			this.displayPanel.Controls.Add(this.showNetButton);
-			this.displayPanel.Location = new System.Drawing.Point(223, 4);
+			this.displayPanel.Location = new System.Drawing.Point(269, 4);
 			this.displayPanel.Margin = new System.Windows.Forms.Padding(4);
 			this.displayPanel.Name = "displayPanel";
-			this.displayPanel.Size = new System.Drawing.Size(189, 107);
+			this.displayPanel.Size = new System.Drawing.Size(258, 107);
 			this.displayPanel.TabIndex = 1;
 			// 
 			// pauseButton
 			// 
 			this.pauseButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
+			this.pauseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.pauseButton.Location = new System.Drawing.Point(4, 54);
 			this.pauseButton.Margin = new System.Windows.Forms.Padding(4);
 			this.pauseButton.Name = "pauseButton";
-			this.pauseButton.Size = new System.Drawing.Size(181, 49);
+			this.pauseButton.Size = new System.Drawing.Size(250, 49);
 			this.pauseButton.TabIndex = 2;
 			this.pauseButton.Text = "Pause";
 			this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
@@ -131,10 +135,12 @@ namespace Rubik_Teacher {
 			// showNetButton
 			// 
 			this.showNetButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
+			this.showNetButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.showNetButton.Location = new System.Drawing.Point(4, 4);
 			this.showNetButton.Margin = new System.Windows.Forms.Padding(4);
 			this.showNetButton.Name = "showNetButton";
-			this.showNetButton.Size = new System.Drawing.Size(181, 49);
+			this.showNetButton.Size = new System.Drawing.Size(250, 49);
 			this.showNetButton.TabIndex = 0;
 			this.showNetButton.Text = "Hide Net";
 			this.showNetButton.UseVisualStyleBackColor = false;
@@ -142,13 +148,15 @@ namespace Rubik_Teacher {
 			// 
 			// shufflePanel
 			// 
+			this.shufflePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.shufflePanel.Controls.Add(this.movesLabel);
 			this.shufflePanel.Controls.Add(this.shuffleButton);
 			this.shufflePanel.Controls.Add(this.shuffleInput);
 			this.shufflePanel.Location = new System.Drawing.Point(8, 4);
 			this.shufflePanel.Margin = new System.Windows.Forms.Padding(4);
 			this.shufflePanel.Name = "shufflePanel";
-			this.shufflePanel.Size = new System.Drawing.Size(211, 107);
+			this.shufflePanel.Size = new System.Drawing.Size(258, 107);
 			this.shufflePanel.TabIndex = 0;
 			// 
 			// movesLabel
@@ -163,16 +171,20 @@ namespace Rubik_Teacher {
 			// shuffleButton
 			// 
 			this.shuffleButton.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+			this.shuffleButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.shuffleButton.Location = new System.Drawing.Point(4, 4);
 			this.shuffleButton.Margin = new System.Windows.Forms.Padding(4);
 			this.shuffleButton.Name = "shuffleButton";
-			this.shuffleButton.Size = new System.Drawing.Size(203, 73);
+			this.shuffleButton.Size = new System.Drawing.Size(249, 73);
 			this.shuffleButton.TabIndex = 1;
 			this.shuffleButton.Text = "Shuffle";
 			this.shuffleButton.Click += new System.EventHandler(this.shuffleButton_Click);
 			// 
 			// shuffleInput
 			// 
+			this.shuffleInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.shuffleInput.Location = new System.Drawing.Point(61, 79);
 			this.shuffleInput.Margin = new System.Windows.Forms.Padding(4);
 			this.shuffleInput.Maximum = new decimal(new int[] {
@@ -186,7 +198,7 @@ namespace Rubik_Teacher {
             0,
             0});
 			this.shuffleInput.Name = "shuffleInput";
-			this.shuffleInput.Size = new System.Drawing.Size(145, 22);
+			this.shuffleInput.Size = new System.Drawing.Size(192, 22);
 			this.shuffleInput.TabIndex = 0;
 			this.shuffleInput.Value = new decimal(new int[] {
             50,
@@ -239,11 +251,12 @@ namespace Rubik_Teacher {
 			// 
 			this.playStageButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this.playStageButton.Enabled = false;
 			this.playStageButton.Location = new System.Drawing.Point(87, 81);
 			this.playStageButton.Name = "playStageButton";
 			this.playStageButton.Size = new System.Drawing.Size(623, 28);
 			this.playStageButton.TabIndex = 3;
-			this.playStageButton.Text = "Play Stage";
+			this.playStageButton.Text = "No sequences for this stage";
 			this.playStageButton.UseVisualStyleBackColor = true;
 			this.playStageButton.Click += new System.EventHandler(this.playStageButton_Click);
 			// 
@@ -323,6 +336,7 @@ namespace Rubik_Teacher {
 			this.rubikTeacher.Size = new System.Drawing.Size(805, 365);
 			this.rubikTeacher.TabIndex = 0;
 			this.rubikTeacher.Text = "rubikTeacher";
+			this.rubikTeacher.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.rubikTeacher_MouseWheel);
 			// 
 			// MainForm
 			// 
