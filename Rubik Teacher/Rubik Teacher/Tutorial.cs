@@ -63,10 +63,8 @@ namespace Rubik_Teacher {
 				form.playStageButton.Text = "No sequences for this stage";
 			}
 
-			if(stage > 0) {
-				form.rubikTeacher.cube.fromString(position[(int) stage]);
-				form.rubikTeacher.refresh();
-			}
+			if(stage > 0)
+				form.rubikTeacher.fromString(position[(int) stage]);
 		}
 	}
 }

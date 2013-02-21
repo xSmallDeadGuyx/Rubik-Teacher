@@ -27,7 +27,7 @@ namespace Rubik_Teacher {
 
 		public Color bgColor = Color.CornflowerBlue;
 
-		public Cube cube;
+		private Cube cube;
 		public float angleX = (float) Math.PI / 6.0F;
 		public float angleY = MathHelper.PiOver4;
 
@@ -396,6 +396,19 @@ namespace Rubik_Teacher {
 
 		public void performMove(Move move) {
 			moveQueue.Enqueue(move);
+		}
+
+		public void fromString(string str) {
+			cube.fromString(str);
+			refresh();
+		}
+
+		public bool isValidMove(string str) {
+			return cube.isValidMove(str);
+		}
+
+		public string cubeToString() {
+			return cube.ToString();
 		}
 	}
 }

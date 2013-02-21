@@ -75,15 +75,46 @@ namespace Rubik_Teacher {
 		private void debugIn_KeyPress(object sender, KeyPressEventArgs e) {
 			if(e.KeyChar == (char)13) {
 				if(debugIn.Text.ToLower() == "tostr")
-					debugOut.AppendText(rubikTeacher.cube.ToString());
+					debugOut.AppendText("Current cube state: " + rubikTeacher.cubeToString() + "\n");
 				else if(debugIn.Text.ToLower().StartsWith("fromstr")) {
-					rubikTeacher.cube.fromString(debugIn.Text.Split(' ')[1]);
-					rubikTeacher.refresh();
+					string[] input = debugIn.Text.Split(' ');
+					if(input.Length == 2 && input[1].Length == 54) {
+						bool otherColours = false;
+						for(int i = 0; i < 54; i++)
+							if(int.Parse(input[1][i].ToString()) < 0 || int.Parse(input[1][i].ToString()) > 5)
+								otherColours = true;
+						if(otherColours)
+							debugOut.AppendText("Invalid cube string\n");
+						else {
+							debugOut.AppendText("Cube updated\n");
+							rubikTeacher.fromString(input[1]);
+						}
+					}
+					else
+						debugOut.AppendText("Invalid cube string\n");
 				}
-				else {
+				else if(debugIn.Text.ToLower().StartsWith("moves ")) {
 					string[] moves = debugIn.Text.ToUpper().Split(' ');
-					foreach(string move in moves)
-						rubikTeacher.performMove(move);
+					if(moves.Length < 2)
+						debugOut.AppendText("No moves inputted\n");
+					else {
+						bool allValid = true;
+						for(int i = 1; i < moves.Length; i++) {
+							if(!rubikTeacher.isValidMove(moves[i])) {
+								debugOut.AppendText("Invalid move: " + moves[i] + "\n");
+								allValid = false;
+								break;
+							}
+						}
+						if(allValid) {
+							debugOut.AppendText("Performed moves:");
+							for(int i = 1; i < moves.Length; i++) {
+								rubikTeacher.performMove(moves[i]);
+								debugOut.AppendText(" " + moves[i]);
+							}
+							debugOut.AppendText("\n");
+						}
+					}
 				}
 				debugIn.Text = "";
 			}
