@@ -116,6 +116,12 @@ namespace Rubik_Teacher {
 						}
 					}
 				}
+				else if(debugIn.Text.ToLower() == "help") {
+					debugOut.AppendText("Commands:\r\n\ttostr\t\t- Print cube state to console as a string\r\n\tfromstr <string>\t- Update cube state to match that encoded in <string>\r\n\tmoves <moves>\t- Perform sequence of moves in normal cube notation\n");
+				}
+				else {
+					debugOut.AppendText("Unknown command or invalid arguments: " + debugIn.Text + "\n");
+				}
 				debugIn.Text = "";
 			}
 		}

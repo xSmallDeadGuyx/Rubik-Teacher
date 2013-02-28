@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Rubik_Teacher.Cube">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgIMAAAQCBAEAAgAAIAEAAAAAACAAAAhAAAAAAg=</HashCode>
+      <FileName>Cube.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rubik_Teacher.Program">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rubik_Teacher.Tutorial">
+    <Position X="5.75" Y="5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="Rubik_Teacher.Tutorial.Stage" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Tutorial.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAEEAAAAAAAAABIAAAQAAICAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Tutorial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rubik_Teacher.RubikTeacher">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ECQCGMAAACAQmwEAAMAUApABAAAsQgAWAAAACAFFIAA=</HashCode>
+      <FileName>RubikTeacher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rubik_Teacher.MainForm">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAQENAAOAJACAhAICEEAQCRQAQAwAJgEgEIBCAAJA=</HashCode>
+      <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Rubik_Teacher.Move">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Cube.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Rubik_Teacher.FaceCoord">
+    <Position X="7.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAIAEAAAAAAAA=</HashCode>
+      <FileName>Cube.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="Rubik_Teacher.FaceID">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAAAAAAAAAAAAAQAAAAAAAIAAAACACAAAAAAAA=</HashCode>
+      <FileName>Cube.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Rubik_Teacher.CubeMove">
+    <Position X="7.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAQAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Cube.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

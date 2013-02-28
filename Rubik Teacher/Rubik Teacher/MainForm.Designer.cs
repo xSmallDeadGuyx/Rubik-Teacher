@@ -60,6 +60,8 @@ namespace Rubik_Teacher {
 			// 
 			// consolePanel
 			// 
+			this.consolePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.consolePanel.AutoSize = true;
 			this.consolePanel.Controls.Add(this.speedLabel);
 			this.consolePanel.Controls.Add(this.rotateSpeedSlider);
 			this.consolePanel.Controls.Add(this.animatedFacesButton);
@@ -111,6 +113,8 @@ namespace Rubik_Teacher {
 			// 
 			// displayPanel
 			// 
+			this.displayPanel.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.displayPanel.AutoSize = true;
 			this.displayPanel.Controls.Add(this.pauseButton);
 			this.displayPanel.Controls.Add(this.showNetButton);
 			this.displayPanel.Location = new System.Drawing.Point(269, 4);
@@ -148,8 +152,7 @@ namespace Rubik_Teacher {
 			// 
 			// shufflePanel
 			// 
-			this.shufflePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.shufflePanel.AutoSize = true;
 			this.shufflePanel.Controls.Add(this.movesLabel);
 			this.shufflePanel.Controls.Add(this.shuffleButton);
 			this.shufflePanel.Controls.Add(this.shuffleInput);
@@ -308,6 +311,8 @@ namespace Rubik_Teacher {
 			// 
 			// debugIn
 			// 
+			this.debugIn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.debugIn.Location = new System.Drawing.Point(6, 87);
 			this.debugIn.Name = "debugIn";
 			this.debugIn.Size = new System.Drawing.Size(785, 22);
@@ -316,14 +321,18 @@ namespace Rubik_Teacher {
 			// 
 			// debugOut
 			// 
+			this.debugOut.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.debugOut.BackColor = System.Drawing.Color.Black;
 			this.debugOut.ForeColor = System.Drawing.Color.White;
 			this.debugOut.Location = new System.Drawing.Point(6, 6);
 			this.debugOut.Multiline = true;
 			this.debugOut.Name = "debugOut";
 			this.debugOut.ReadOnly = true;
+			this.debugOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.debugOut.Size = new System.Drawing.Size(785, 78);
 			this.debugOut.TabIndex = 0;
+			this.debugOut.Text = "Type \"help\" for a list of commands\r\n";
 			// 
 			// rubikTeacher
 			// 
@@ -357,6 +366,7 @@ namespace Rubik_Teacher {
 			((System.ComponentModel.ISupportInitialize)(this.shuffleInput)).EndInit();
 			this.mainTabControl.ResumeLayout(false);
 			this.cubeControlPage.ResumeLayout(false);
+			this.cubeControlPage.PerformLayout();
 			this.tutorialPage.ResumeLayout(false);
 			this.tutorialPage.PerformLayout();
 			this.debugTab.ResumeLayout(false);
