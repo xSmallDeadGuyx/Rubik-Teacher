@@ -139,7 +139,7 @@ namespace Rubik_Teacher {
 							if(areAdjacent(move.face, (FaceID) i))
 								verticesChanged[i] = true;
 						cube.performMove(move);
-						
+						updateHighlights(move);
 						lastMove = move;
 					}
 				}
@@ -160,6 +160,7 @@ namespace Rubik_Teacher {
 
 					faceAngle = 0.0F;
 					cube.performMove(lastMove);
+					updateHighlights(lastMove);
 				}
 			}
 
@@ -447,6 +448,80 @@ namespace Rubik_Teacher {
 					return;
 				}
 			}
+		}
+
+		public void updateHighlights(Move move) {
+			bool[,,] oldHighlights = (bool[,,]) pieceHighlighted.Clone();
+			for(int i = 0; i < 3; i++)
+				for(int j = 0; j < 3; j++)
+					switch(move.twist) {
+						case CubeMove.Clockwise:
+							switch(move.face) {
+								case FaceID.Front:
+									pieceHighlighted[2 - j, i, 0] = oldHighlights[i, j, 0];
+									break;
+								case FaceID.Back:
+									pieceHighlighted[j, 2 - i, 2] = oldHighlights[i, j, 2];
+									break;
+								case FaceID.Left:
+									pieceHighlighted[0, 2 - j, i] = oldHighlights[0, i, j];
+									break;
+								case FaceID.Right:
+									pieceHighlighted[2, j, 2 - i] = oldHighlights[2, i, j];
+									break;
+								case FaceID.Top:
+									pieceHighlighted[j, 0, 2 - i] = oldHighlights[i, 0, j];
+									break;
+								case FaceID.Bottom:
+									pieceHighlighted[2 - j, 2, i] = oldHighlights[i, 2, j];
+									break;
+							}
+							break;
+						case CubeMove.Double:
+							switch(move.face) {
+								case FaceID.Front:
+									pieceHighlighted[2 - i, 2 - j, 0] = oldHighlights[i, j, 0];
+									break;
+								case FaceID.Back:
+									pieceHighlighted[2 - i, 2 - j, 2] = oldHighlights[i, j, 2];
+									break;
+								case FaceID.Left:
+									pieceHighlighted[0, 2 - i, 2 - j] = oldHighlights[0, i, j];
+									break;
+								case FaceID.Right:
+									pieceHighlighted[2, 2 - i, 2 - j] = oldHighlights[2, i, j];
+									break;
+								case FaceID.Top:
+									pieceHighlighted[2 - i, 0, 2 - j] = oldHighlights[i, 0, j];
+									break;
+								case FaceID.Bottom:
+									pieceHighlighted[2 - i, 2, 2 - j] = oldHighlights[i, 2, j];
+									break;
+							}
+							break;
+						case CubeMove.AntiClockwise:
+							switch(move.face) {
+								case FaceID.Front:
+									pieceHighlighted[j, 2 - i, 0] = oldHighlights[i, j, 0];
+									break;
+								case FaceID.Back:
+									pieceHighlighted[2 - j, i, 2] = oldHighlights[i, j, 2];
+									break;
+								case FaceID.Left:
+									pieceHighlighted[0, j, 2 - i] = oldHighlights[0, i, j];
+									break;
+								case FaceID.Right:
+									pieceHighlighted[2, 2 - j, i] = oldHighlights[2, i, j];
+									break;
+								case FaceID.Top:
+									pieceHighlighted[2 - j, 0, i] = oldHighlights[i, 0, j];
+									break;
+								case FaceID.Bottom:
+									pieceHighlighted[j, 2, 2 - i] = oldHighlights[i, 2, j];
+									break;
+							}
+							break;
+					}
 		}
 
 		public void performMove(FaceID face, CubeMove rot) {

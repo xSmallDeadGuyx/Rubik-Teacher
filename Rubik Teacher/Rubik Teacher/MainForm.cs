@@ -74,6 +74,8 @@ namespace Rubik_Teacher {
 
 		private void debugIn_KeyPress(object sender, KeyPressEventArgs e) {
 			if(e.KeyChar == (char)13) {
+				e.Handled = true;
+
 				if(debugIn.Text.ToLower() == "tostr")
 					debugOut.AppendText("Current cube state: " + rubikTeacher.cubeToString() + "\n");
 				else if(debugIn.Text.ToLower().StartsWith("fromstr")) {
