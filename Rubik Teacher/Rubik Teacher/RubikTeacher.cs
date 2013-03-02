@@ -19,13 +19,17 @@ namespace Rubik_Teacher {
 	public class RubikTeacher : GraphicsDeviceControl {
 		public ContentManager content;
 		public SpriteBatch spriteBatch;
-		public BasicEffect effect;
+
+		public BasicEffect faceEffect;
+		public BasicEffect lineEffect;
 
 		public Stopwatch timer;
 		private KeyboardState prevKb = new KeyboardState();
 		private Point prevMs = new Point();
 
 		public Color bgColor = Color.CornflowerBlue;
+
+		public Color highlightColor = Color.SpringGreen;
 
 		private Cube cube;
 		public float angleX = (float) Math.PI / 6.0F;
@@ -34,7 +38,7 @@ namespace Rubik_Teacher {
 		public Matrix viewMatrix;
 		public Matrix projectionMatrix;
 
-		public Texture2D texture;
+		public Texture2D faceTexture;
 
 		public Random rand = new Random();
 
@@ -57,6 +61,8 @@ namespace Rubik_Teacher {
 		public bool[] verticesChanged = new bool[6];
 		public List<VertexPositionColorTexture[]> faceVertices = new List<VertexPositionColorTexture[]>();
 
+		public bool[,,] pieceHighlighted = new bool[3, 3, 3];
+
 		public Queue<Move> moveQueue = new Queue<Move>();
 
 		protected override void Initialize() {
@@ -65,12 +71,13 @@ namespace Rubik_Teacher {
 			content = new ContentManager(Services, "Content");
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			texture = new Texture2D(GraphicsDevice, 64, 64);
+			faceTexture = new Texture2D(GraphicsDevice, 64, 64);
 			Color[] data = new Color[64 * 64];
 			for(int i = 0; i < 64; i++) for(int j = 0; j < 64; j++)
 				if(i < 8 || j < 8 || i >= 56 || j >= 56) data[i + j * 64] = Color.Black;
 				else data[i + j * 64] = Color.White;
-			texture.SetData<Color>(data);
+			faceTexture.SetData<Color>(data);
+
 
 			RasterizerState rs = new RasterizerState();
 			rs.CullMode = CullMode.CullCounterClockwiseFace;
@@ -78,11 +85,16 @@ namespace Rubik_Teacher {
 			GraphicsDevice.RasterizerState = rs;
 			
 
-			effect = new BasicEffect(GraphicsDevice);
-			effect.VertexColorEnabled = true;
-			effect.TextureEnabled = true;
-			effect.Texture = texture;
-			effect.LightingEnabled = false;
+			faceEffect = new BasicEffect(GraphicsDevice);
+			faceEffect.VertexColorEnabled = true;
+			faceEffect.TextureEnabled = true;
+			faceEffect.Texture = faceTexture;
+			faceEffect.LightingEnabled = false;
+
+			lineEffect = new BasicEffect(GraphicsDevice);
+			lineEffect.VertexColorEnabled = true;
+			lineEffect.TextureEnabled = false;
+			lineEffect.LightingEnabled = false;
 
 			cube = new Cube();
 
@@ -127,6 +139,7 @@ namespace Rubik_Teacher {
 							if(areAdjacent(move.face, (FaceID) i))
 								verticesChanged[i] = true;
 						cube.performMove(move);
+						
 						lastMove = move;
 					}
 				}
@@ -178,25 +191,25 @@ namespace Rubik_Teacher {
 				if(showNet) {
 					spriteBatch.Begin();
 					for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) {
-							spriteBatch.Draw(texture, new Rectangle(48 + i * 16, j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Top, i, j]]);
-							spriteBatch.Draw(texture, new Rectangle(i * 16, 48 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Left, i, j]]);
-							spriteBatch.Draw(texture, new Rectangle(48 + i * 16, 48 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Front, i, j]]);
-							spriteBatch.Draw(texture, new Rectangle(96 + i * 16, 48 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Right, i, j]]);
-							spriteBatch.Draw(texture, new Rectangle(48 + i * 16, 96 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Bottom, i, j]]);
-							spriteBatch.Draw(texture, new Rectangle(48 + i * 16, 144 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Back, 2 - i, 2 - j]]);
+							spriteBatch.Draw(faceTexture, new Rectangle(48 + i * 16, j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Top, i, j]]);
+							spriteBatch.Draw(faceTexture, new Rectangle(i * 16, 48 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Left, i, j]]);
+							spriteBatch.Draw(faceTexture, new Rectangle(48 + i * 16, 48 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Front, i, j]]);
+							spriteBatch.Draw(faceTexture, new Rectangle(96 + i * 16, 48 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Right, i, j]]);
+							spriteBatch.Draw(faceTexture, new Rectangle(48 + i * 16, 96 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Bottom, i, j]]);
+							spriteBatch.Draw(faceTexture, new Rectangle(48 + i * 16, 144 + j * 16, 16, 16), cube.colourIDs[(int) cube.faceColours[(int) FaceID.Back, 2 - i, 2 - j]]);
 						}
 					spriteBatch.End();
 				}
 
 				Matrix worldMatrix = Matrix.CreateRotationY(angleY) * Matrix.CreateRotationX(angleX);
-				effect.World = worldMatrix;
-				effect.View = viewMatrix;
-				effect.Projection = projectionMatrix;
+				lineEffect.World = faceEffect.World = worldMatrix;
+				lineEffect.View = faceEffect.View = viewMatrix;
+				lineEffect.Projection = faceEffect.Projection = projectionMatrix;
 
 				GraphicsDevice.BlendState = BlendState.Opaque;
 				GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-				foreach(EffectPass p in effect.CurrentTechnique.Passes)
+				foreach(EffectPass p in faceEffect.CurrentTechnique.Passes)
 					p.Apply();
 
 				for(int i = 0; i < 6; i++) {
@@ -204,8 +217,19 @@ namespace Rubik_Teacher {
 						verticesChanged[i] = false;
 						faceVertices[i] = generateFaceVertices((FaceID) i);
 					}
-					GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, faceVertices[i], 0, faceVertices[i].Length / 3, VertexPositionColorTexture.VertexDeclaration);
+					GraphicsDevice.DrawUserPrimitives<VertexPositionColorTexture>(PrimitiveType.TriangleList, faceVertices[i], 0, faceVertices[i].Length / 3);
 				}
+
+				foreach(EffectPass p in lineEffect.CurrentTechnique.Passes)
+					p.Apply();
+
+				for(int x = 0; x < 3; x++)
+					for(int y = 0; y < 3; y++)
+						for(int z = 0; z < 3; z++)
+							if(pieceHighlighted[x, y, z]) {
+								VertexPositionColor[] vertices = generateHighlightVertices(x, y, z, highlightColor);
+								GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, vertices, 0, vertices.Length / 2);
+							}
 			}
 			catch(Exception e) { Console.WriteLine(e.Message + " - " + e.StackTrace); }
 		}
@@ -334,6 +358,41 @@ namespace Rubik_Teacher {
 							vertices[coords.i * 12 + coords.j * 36 + n].Position = rotate(rotatingFace, vertices[coords.i * 12 + coords.j * 36 + n].Position, faceAngle);
 				}
 			}
+			return vertices;
+		}
+
+		public VertexPositionColor[] generateHighlightVertices(int x, int y, int z, Color c) {
+			Vector3 offset = new Vector3(-1.6F + (float) x, -1.6F + (float) y, -1.6F + (float) z);
+			VertexPositionColor[] vertices = {
+				new VertexPositionColor(offset, c), new VertexPositionColor(offset + new Vector3(1.2F, 0F, 0F), c),
+				new VertexPositionColor(offset, c), new VertexPositionColor(offset + new Vector3(0F, 1.2F, 0F), c),
+				new VertexPositionColor(offset, c), new VertexPositionColor(offset + new Vector3(0F, 0F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(0F, 1.2F, 1.2F), c), new VertexPositionColor(offset + new Vector3(0F, 0F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(0F, 1.2F, 1.2F), c), new VertexPositionColor(offset + new Vector3(0F, 1.2F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(0F, 1.2F, 1.2F), c), new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 0F, 1.2F), c), new VertexPositionColor(offset + new Vector3(0F, 0F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 0F, 1.2F), c), new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 0F, 1.2F), c), new VertexPositionColor(offset + new Vector3(1.2F, 0F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 0F), c), new VertexPositionColor(offset + new Vector3(0F, 1.2F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 0F), c), new VertexPositionColor(offset + new Vector3(1.2F, 0F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 0F), c), new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 1.2F), c)
+			};
+
+			if(faceAngle > 0.0F)
+				for(int i = 0; i < vertices.Length; i++) {
+					if(x == 0 && rotatingFace == FaceID.Left)
+						vertices[i].Position = rotate(FaceID.Left, vertices[i].Position, faceAngle);
+					if(y == 0 && rotatingFace == FaceID.Top)
+						vertices[i].Position = rotate(FaceID.Top, vertices[i].Position, faceAngle);
+					if(z == 0 && rotatingFace == FaceID.Front)
+						vertices[i].Position = rotate(FaceID.Front, vertices[i].Position, faceAngle);
+					if(x == 2 && rotatingFace == FaceID.Right)
+						vertices[i].Position = rotate(FaceID.Right, vertices[i].Position, faceAngle);
+					if(y == 2 && rotatingFace == FaceID.Bottom)
+						vertices[i].Position = rotate(FaceID.Bottom, vertices[i].Position, faceAngle);
+					if(z == 2 && rotatingFace == FaceID.Back)
+						vertices[i].Position = rotate(FaceID.Back, vertices[i].Position, faceAngle);
+				}
 			return vertices;
 		}
 
