@@ -65,6 +65,12 @@ namespace Rubik_Teacher {
 
 		public Queue<Move> moveQueue = new Queue<Move>();
 
+		public MainForm form;
+
+		public RubikTeacher(MainForm f) {
+			form = f;
+		}
+
 		protected override void Initialize() {
 			Application.Idle += delegate { Invalidate(); };
 
@@ -141,6 +147,9 @@ namespace Rubik_Teacher {
 						cube.performMove(move);
 						updateHighlights(move);
 						lastMove = move;
+
+						if(moveQueue.Count == 0)
+							onSequenceFinish();
 					}
 				}
 				if(delaySoFar > 0) delaySoFar--;
@@ -161,6 +170,9 @@ namespace Rubik_Teacher {
 					faceAngle = 0.0F;
 					cube.performMove(lastMove);
 					updateHighlights(lastMove);
+
+					if(moveQueue.Count == 0)
+						onSequenceFinish();
 				}
 			}
 
@@ -178,6 +190,10 @@ namespace Rubik_Teacher {
 
 			prevKb = kb;
 			prevMs = vms;
+		}
+
+		public void onSequenceFinish() {
+			form.tutorial.resetSequence();
 		}
 
 		public bool inBounds(Point p) {

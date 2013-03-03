@@ -44,7 +44,7 @@ namespace Rubik_Teacher {
 			this.optionsPage = new System.Windows.Forms.TabPage();
 			this.prevSequenceButton = new System.Windows.Forms.Button();
 			this.nextSequenceButton = new System.Windows.Forms.Button();
-			this.rubikTeacher = new Rubik_Teacher.RubikTeacher();
+			this.rubikTeacher = new Rubik_Teacher.RubikTeacher(this);
 			this.consolePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize) (this.rotateSpeedSlider)).BeginInit();
 			this.displayPanel.SuspendLayout();

@@ -66,7 +66,7 @@ namespace Rubik_Teacher {
 
 		public bool nextSequence() {
 			if(sequence < moves[(int) stage].Length - 1)
-				sequence++;
+				_sequence++;
 			return sequence < moves[(int) stage].Length - 1;
 		}
 
