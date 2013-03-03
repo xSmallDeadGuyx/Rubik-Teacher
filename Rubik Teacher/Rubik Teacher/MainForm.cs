@@ -36,6 +36,7 @@ namespace Rubik_Teacher {
 		}
 
 		private void MainForm_Load(object sender, EventArgs e) {
+			rubikTeacher.form = this;
 			this.tutorial = new Tutorial(this);
 			rubikTeacher.bgColor = new Microsoft.Xna.Framework.Color(BackColor.R, BackColor.G, BackColor.B);
 		}

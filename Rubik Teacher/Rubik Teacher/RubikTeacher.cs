@@ -67,10 +67,6 @@ namespace Rubik_Teacher {
 
 		public MainForm form;
 
-		public RubikTeacher(MainForm f) {
-			form = f;
-		}
-
 		protected override void Initialize() {
 			Application.Idle += delegate { Invalidate(); };
 

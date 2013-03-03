@@ -106,7 +106,7 @@ namespace Rubik_Teacher {
 					form.playStageButton.Enabled = true;
 					form.playStageButton.Text = "Play sequence: " + moves[(int) stage][sequence];
 
-					form.nextSequenceButton.Enabled = true;
+					form.nextSequenceButton.Enabled = sequence < moves[(int) stage].Length - 1;
 				}
 			}
 			else {
