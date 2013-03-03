@@ -16,21 +16,6 @@ namespace Rubik_Teacher {
 			InitializeComponent();
 		}
 
-		private void shuffleButton_Click(object sender, EventArgs e) {
-			Random rand = new Random();
-
-			List<FaceID> facesChanged = new List<FaceID>();
-			Move lastMove = new Move(FaceID.Top, CubeMove.Clockwise);
-			for(int i = 0; i < shuffleInput.Value; i++) {
-				FaceID changed = (FaceID) rand.Next(6);
-				while(changed == lastMove.face) changed = (FaceID) rand.Next(6);
-				CubeMove cmove = (CubeMove) rand.Next(3);
-				lastMove.face = changed;
-				lastMove.twist = cmove;
-				rubikTeacher.performMove(changed, cmove);
-			}
-		}
-
 		private void showNetButton_Click(object sender, EventArgs e) {
 			rubikTeacher.showNet = !rubikTeacher.showNet;
 			showNetButton.Text = rubikTeacher.showNet ? "Hide Net" : "Show Net";
@@ -66,10 +51,9 @@ namespace Rubik_Teacher {
 		}
 
 		private void playStageButton_Click(object sender, EventArgs e) {
-			string[] moves = tutorial.moves[(int) tutorial.stage].Split(' ');
+			string[] moves = tutorial.moves[(int) tutorial.stage][tutorial.sequence].Split(' ');
 			foreach(string move in moves)
 				rubikTeacher.performMove(move);
-			tutorial.resetStage();
 		}
 
 		private void debugIn_KeyPress(object sender, KeyPressEventArgs e) {
@@ -156,6 +140,16 @@ namespace Rubik_Teacher {
 				rubikTeacher.zoom = 0;
 			if(rubikTeacher.zoom < -10)
 				rubikTeacher.zoom = -10;
+		}
+
+		private void nextSequenceButton_Click(object sender, EventArgs e) {
+			nextSequenceButton.Enabled = tutorial.nextSequence();
+			prevSequenceButton.Enabled = true;
+		}
+
+		private void prevSequenceButton_Click(object sender, EventArgs e) {
+			prevSequenceButton.Enabled = tutorial.prevSequence();
+			nextSequenceButton.Enabled = true;
 		}
 	}
 }

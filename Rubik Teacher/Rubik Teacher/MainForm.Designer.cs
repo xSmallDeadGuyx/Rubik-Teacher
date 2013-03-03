@@ -33,7 +33,6 @@ namespace Rubik_Teacher {
 			this.pauseButton = new System.Windows.Forms.Button();
 			this.showNetButton = new System.Windows.Forms.Button();
 			this.mainTabControl = new System.Windows.Forms.TabControl();
-			this.optionsPage = new System.Windows.Forms.TabPage();
 			this.tutorialPage = new System.Windows.Forms.TabPage();
 			this.playStageButton = new System.Windows.Forms.Button();
 			this.tutorialTextbox = new System.Windows.Forms.TextBox();
@@ -42,14 +41,17 @@ namespace Rubik_Teacher {
 			this.debugTab = new System.Windows.Forms.TabPage();
 			this.debugIn = new System.Windows.Forms.TextBox();
 			this.debugOut = new System.Windows.Forms.TextBox();
+			this.optionsPage = new System.Windows.Forms.TabPage();
+			this.prevSequenceButton = new System.Windows.Forms.Button();
+			this.nextSequenceButton = new System.Windows.Forms.Button();
 			this.rubikTeacher = new Rubik_Teacher.RubikTeacher();
 			this.consolePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize) (this.rotateSpeedSlider)).BeginInit();
 			this.displayPanel.SuspendLayout();
 			this.mainTabControl.SuspendLayout();
-			this.optionsPage.SuspendLayout();
 			this.tutorialPage.SuspendLayout();
 			this.debugTab.SuspendLayout();
+			this.optionsPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// consolePanel
@@ -107,7 +109,6 @@ namespace Rubik_Teacher {
 			// 
 			// displayPanel
 			// 
-			this.displayPanel.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.displayPanel.AutoSize = true;
 			this.displayPanel.Controls.Add(this.pauseButton);
 			this.displayPanel.Controls.Add(this.showNetButton);
@@ -157,20 +158,10 @@ namespace Rubik_Teacher {
 			this.mainTabControl.Size = new System.Drawing.Size(805, 144);
 			this.mainTabControl.TabIndex = 3;
 			// 
-			// optionsPage
-			// 
-			this.optionsPage.Controls.Add(this.displayPanel);
-			this.optionsPage.Controls.Add(this.consolePanel);
-			this.optionsPage.Location = new System.Drawing.Point(4, 25);
-			this.optionsPage.Name = "optionsPage";
-			this.optionsPage.Padding = new System.Windows.Forms.Padding(3);
-			this.optionsPage.Size = new System.Drawing.Size(797, 115);
-			this.optionsPage.TabIndex = 0;
-			this.optionsPage.Text = "Options";
-			this.optionsPage.UseVisualStyleBackColor = true;
-			// 
 			// tutorialPage
 			// 
+			this.tutorialPage.Controls.Add(this.nextSequenceButton);
+			this.tutorialPage.Controls.Add(this.prevSequenceButton);
 			this.tutorialPage.Controls.Add(this.playStageButton);
 			this.tutorialPage.Controls.Add(this.tutorialTextbox);
 			this.tutorialPage.Controls.Add(this.nextStageButton);
@@ -189,9 +180,9 @@ namespace Rubik_Teacher {
 			this.playStageButton.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.playStageButton.Enabled = false;
-			this.playStageButton.Location = new System.Drawing.Point(87, 81);
+			this.playStageButton.Location = new System.Drawing.Point(119, 81);
 			this.playStageButton.Name = "playStageButton";
-			this.playStageButton.Size = new System.Drawing.Size(623, 28);
+			this.playStageButton.Size = new System.Drawing.Size(559, 28);
 			this.playStageButton.TabIndex = 3;
 			this.playStageButton.Text = "No sequences for this stage";
 			this.playStageButton.UseVisualStyleBackColor = true;
@@ -268,6 +259,41 @@ namespace Rubik_Teacher {
 			this.debugOut.TabIndex = 0;
 			this.debugOut.Text = "Type \"help\" for a list of commands\r\n";
 			// 
+			// optionsPage
+			// 
+			this.optionsPage.Controls.Add(this.displayPanel);
+			this.optionsPage.Controls.Add(this.consolePanel);
+			this.optionsPage.Location = new System.Drawing.Point(4, 25);
+			this.optionsPage.Name = "optionsPage";
+			this.optionsPage.Padding = new System.Windows.Forms.Padding(3);
+			this.optionsPage.Size = new System.Drawing.Size(797, 115);
+			this.optionsPage.TabIndex = 0;
+			this.optionsPage.Text = "Options";
+			this.optionsPage.UseVisualStyleBackColor = true;
+			// 
+			// prevSequenceButton
+			// 
+			this.prevSequenceButton.Enabled = false;
+			this.prevSequenceButton.Location = new System.Drawing.Point(87, 81);
+			this.prevSequenceButton.Name = "prevSequenceButton";
+			this.prevSequenceButton.Size = new System.Drawing.Size(28, 28);
+			this.prevSequenceButton.TabIndex = 4;
+			this.prevSequenceButton.Text = "<";
+			this.prevSequenceButton.UseVisualStyleBackColor = true;
+			this.prevSequenceButton.Click += new System.EventHandler(this.prevSequenceButton_Click);
+			// 
+			// nextSequenceButton
+			// 
+			this.nextSequenceButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.nextSequenceButton.Enabled = false;
+			this.nextSequenceButton.Location = new System.Drawing.Point(682, 81);
+			this.nextSequenceButton.Name = "nextSequenceButton";
+			this.nextSequenceButton.Size = new System.Drawing.Size(28, 28);
+			this.nextSequenceButton.TabIndex = 5;
+			this.nextSequenceButton.Text = ">";
+			this.nextSequenceButton.UseVisualStyleBackColor = true;
+			this.nextSequenceButton.Click += new System.EventHandler(this.nextSequenceButton_Click);
+			// 
 			// rubikTeacher
 			// 
 			this.rubikTeacher.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -297,12 +323,12 @@ namespace Rubik_Teacher {
 			((System.ComponentModel.ISupportInitialize) (this.rotateSpeedSlider)).EndInit();
 			this.displayPanel.ResumeLayout(false);
 			this.mainTabControl.ResumeLayout(false);
-			this.optionsPage.ResumeLayout(false);
-			this.optionsPage.PerformLayout();
 			this.tutorialPage.ResumeLayout(false);
 			this.tutorialPage.PerformLayout();
 			this.debugTab.ResumeLayout(false);
 			this.debugTab.PerformLayout();
+			this.optionsPage.ResumeLayout(false);
+			this.optionsPage.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -327,5 +353,7 @@ namespace Rubik_Teacher {
 		private TabPage debugTab;
 		private TextBox debugIn;
 		private TextBox debugOut;
+		public Button nextSequenceButton;
+		public Button prevSequenceButton;
 	}
 }

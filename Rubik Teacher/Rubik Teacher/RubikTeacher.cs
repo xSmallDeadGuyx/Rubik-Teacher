@@ -544,5 +544,9 @@ namespace Rubik_Teacher {
 		public string cubeToString() {
 			return cube.ToString();
 		}
+
+		public bool areMovesHappening() {
+			return faceAngle > 0.0F || moveQueue.Count > 0;
+		}
 	}
 }
