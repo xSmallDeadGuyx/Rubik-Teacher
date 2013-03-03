@@ -51,9 +51,13 @@ namespace Rubik_Teacher {
 		}
 
 		private void playStageButton_Click(object sender, EventArgs e) {
+			tutorial.resetSequence();
 			string[] moves = tutorial.moves[(int) tutorial.stage][tutorial.sequence].Split(' ');
 			foreach(string move in moves)
 				rubikTeacher.performMove(move);
+
+			nextSequenceButton.Enabled = tutorial.nextSequence();
+			prevSequenceButton.Enabled = tutorial.sequence > 0;
 		}
 
 		private void debugIn_KeyPress(object sender, KeyPressEventArgs e) {
@@ -128,10 +132,6 @@ namespace Rubik_Teacher {
 				}
 				debugIn.Text = "";
 			}
-		}
-
-		private void tutorialPage_Enter(object sender, EventArgs e) {
-			tutorial.resetStage();
 		}
 
 		private void rubikTeacher_MouseWheel(object sender, MouseEventArgs e) {
