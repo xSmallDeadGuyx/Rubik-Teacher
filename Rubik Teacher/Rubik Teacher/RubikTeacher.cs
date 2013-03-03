@@ -23,7 +23,7 @@ namespace Rubik_Teacher {
 		public BasicEffect faceEffect;
 		public BasicEffect lineEffect;
 
-		public Stopwatch timer;
+		public Stopwatch timer = new Stopwatch();
 		private KeyboardState prevKb = new KeyboardState();
 		private Point prevMs = new Point();
 
@@ -53,7 +53,7 @@ namespace Rubik_Teacher {
 		public bool paused = false;
 
 		public bool animateFaces = true;
-		public int performDelay = 100;
+		public int performDelay = 300;
 		public int delaySoFar = 0;
 
 		public int zoom = 0;
@@ -104,6 +104,8 @@ namespace Rubik_Teacher {
 			projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1.0f, 300.0f);
 
 			refresh();
+
+			timer.Start();
 		}
 
 		public void refresh() {
@@ -115,13 +117,19 @@ namespace Rubik_Teacher {
 		}
 
 		protected void update() {
+			float correction = 1.0F;
+			if(timer.IsRunning) {
+				timer.Stop();
+				correction = (float) timer.ElapsedTicks / 3000F;
+			}
+
 			viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, -7 + zoom), new Vector3(0, 0, 0), new Vector3(0, -1, 0));
 			projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1.0f, 300.0f);
 
 			if(!paused) {
 				if(moveQueue.Count > 0 && delaySoFar == 0 && faceAngle <= 0.0F) {
 					Move move = moveQueue.Dequeue();
-					delaySoFar = performDelay;
+					delaySoFar = (int) (performDelay / correction);
 					if(animateFaces) {
 						verticesChanged[(int) move.face] = true;
 						for(int i = 0; i < 6; i++)
@@ -155,7 +163,7 @@ namespace Rubik_Teacher {
 						if(areAdjacent(lastMove.face, (FaceID) i))
 							verticesChanged[i] = true;
 
-					faceAngle += rotatePerStep;
+					faceAngle += rotatePerStep * correction;
 				}
 				if(faceAngle >= rotatingTo) {
 					verticesChanged[(int) lastMove.face] = true;
@@ -186,6 +194,9 @@ namespace Rubik_Teacher {
 
 			prevKb = kb;
 			prevMs = vms;
+
+			if(!timer.IsRunning)
+				timer.Restart();
 		}
 
 		public void onSequenceFinish() {

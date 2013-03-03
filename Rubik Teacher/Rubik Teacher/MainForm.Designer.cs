@@ -34,6 +34,8 @@ namespace Rubik_Teacher {
 			this.showNetButton = new System.Windows.Forms.Button();
 			this.mainTabControl = new System.Windows.Forms.TabControl();
 			this.tutorialPage = new System.Windows.Forms.TabPage();
+			this.nextSequenceButton = new System.Windows.Forms.Button();
+			this.prevSequenceButton = new System.Windows.Forms.Button();
 			this.playStageButton = new System.Windows.Forms.Button();
 			this.tutorialTextbox = new System.Windows.Forms.TextBox();
 			this.nextStageButton = new System.Windows.Forms.Button();
@@ -42,8 +44,6 @@ namespace Rubik_Teacher {
 			this.debugIn = new System.Windows.Forms.TextBox();
 			this.debugOut = new System.Windows.Forms.TextBox();
 			this.optionsPage = new System.Windows.Forms.TabPage();
-			this.prevSequenceButton = new System.Windows.Forms.Button();
-			this.nextSequenceButton = new System.Windows.Forms.Button();
 			this.rubikTeacher = new Rubik_Teacher.RubikTeacher();
 			this.consolePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize) (this.rotateSpeedSlider)).BeginInit();
@@ -174,6 +174,29 @@ namespace Rubik_Teacher {
 			this.tutorialPage.Text = "Tutorial";
 			this.tutorialPage.UseVisualStyleBackColor = true;
 			// 
+			// nextSequenceButton
+			// 
+			this.nextSequenceButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.nextSequenceButton.Enabled = false;
+			this.nextSequenceButton.Location = new System.Drawing.Point(682, 81);
+			this.nextSequenceButton.Name = "nextSequenceButton";
+			this.nextSequenceButton.Size = new System.Drawing.Size(28, 28);
+			this.nextSequenceButton.TabIndex = 5;
+			this.nextSequenceButton.Text = ">";
+			this.nextSequenceButton.UseVisualStyleBackColor = true;
+			this.nextSequenceButton.Click += new System.EventHandler(this.nextSequenceButton_Click);
+			// 
+			// prevSequenceButton
+			// 
+			this.prevSequenceButton.Enabled = false;
+			this.prevSequenceButton.Location = new System.Drawing.Point(87, 81);
+			this.prevSequenceButton.Name = "prevSequenceButton";
+			this.prevSequenceButton.Size = new System.Drawing.Size(28, 28);
+			this.prevSequenceButton.TabIndex = 4;
+			this.prevSequenceButton.Text = "<";
+			this.prevSequenceButton.UseVisualStyleBackColor = true;
+			this.prevSequenceButton.Click += new System.EventHandler(this.prevSequenceButton_Click);
+			// 
 			// playStageButton
 			// 
 			this.playStageButton.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -270,29 +293,6 @@ namespace Rubik_Teacher {
 			this.optionsPage.Text = "Options";
 			this.optionsPage.UseVisualStyleBackColor = true;
 			// 
-			// prevSequenceButton
-			// 
-			this.prevSequenceButton.Enabled = false;
-			this.prevSequenceButton.Location = new System.Drawing.Point(87, 81);
-			this.prevSequenceButton.Name = "prevSequenceButton";
-			this.prevSequenceButton.Size = new System.Drawing.Size(28, 28);
-			this.prevSequenceButton.TabIndex = 4;
-			this.prevSequenceButton.Text = "<";
-			this.prevSequenceButton.UseVisualStyleBackColor = true;
-			this.prevSequenceButton.Click += new System.EventHandler(this.prevSequenceButton_Click);
-			// 
-			// nextSequenceButton
-			// 
-			this.nextSequenceButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.nextSequenceButton.Enabled = false;
-			this.nextSequenceButton.Location = new System.Drawing.Point(682, 81);
-			this.nextSequenceButton.Name = "nextSequenceButton";
-			this.nextSequenceButton.Size = new System.Drawing.Size(28, 28);
-			this.nextSequenceButton.TabIndex = 5;
-			this.nextSequenceButton.Text = ">";
-			this.nextSequenceButton.UseVisualStyleBackColor = true;
-			this.nextSequenceButton.Click += new System.EventHandler(this.nextSequenceButton_Click);
-			// 
 			// rubikTeacher
 			// 
 			this.rubikTeacher.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -351,8 +351,8 @@ namespace Rubik_Teacher {
 		public Button playStageButton;
 		private TabPage debugTab;
 		private TextBox debugIn;
-		private TextBox debugOut;
 		public Button nextSequenceButton;
 		public Button prevSequenceButton;
+		public TextBox debugOut;
 	}
 }
