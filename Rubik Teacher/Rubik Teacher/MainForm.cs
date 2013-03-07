@@ -53,13 +53,12 @@ namespace Rubik_Teacher {
 
 		private void playStageButton_Click(object sender, EventArgs e) {
 			tutorial.resetSequence();
-			playStageButton.Enabled = false;
+
 			string[] moves = tutorial.moves[(int) tutorial.stage][tutorial.sequence].Split(' ');
 			foreach(string move in moves)
 				rubikTeacher.performMove(move);
 
-			nextSequenceButton.Enabled = tutorial.nextSequence();
-			prevSequenceButton.Enabled = tutorial.sequence > 0;
+			playStageButton.Enabled = nextSequenceButton.Enabled = prevSequenceButton.Enabled = false;
 		}
 
 		private void debugIn_KeyPress(object sender, KeyPressEventArgs e) {

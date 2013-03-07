@@ -201,6 +201,7 @@ namespace Rubik_Teacher {
 
 		public void onSequenceFinish() {
 			form.tutorial.resetSequence();
+			form.tutorial.nextSequence();
 		}
 
 		public bool inBounds(Point p) {

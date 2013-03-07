@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace Rubik_Teacher {
 	public class Tutorial {
@@ -45,7 +46,19 @@ namespace Rubik_Teacher {
 		public string[][] positions = {
 			new string[] {},
 			new string[] {},
-			new string[] {"000000000111111111222222222333333333444444444555555555"}
+			new string[] {"000000000111111111222222222333333333444444444555555555", "000000111000111111222222222333333333445445445455455455", "111000111000111000222222222333333333545545545454454454", "011100011100011100322322322332332332545545545454454454", "010101010101010101323323323232232232545545545454454454", "010101010101010101232323323323232232454545545545454454", "010101010101010101232323232323232323454545454545454545"}
+		};
+
+		public Vector3[][] solvingPiece = {
+			new Vector3[] {},
+			new Vector3[] {},
+			new Vector3[] {new Vector3(0, 0, 0)}
+		};
+
+		public Vector3[][] targetPlace = {
+			new Vector3[] {},
+			new Vector3[] {},
+			new Vector3[] {}
 		};
 
 		public Tutorial(MainForm f) {
@@ -66,7 +79,7 @@ namespace Rubik_Teacher {
 
 		public bool nextSequence() {
 			if(sequence < moves[(int) stage].Length - 1)
-				_sequence++;
+				sequence++;
 			return sequence < moves[(int) stage].Length - 1;
 		}
 
@@ -115,6 +128,9 @@ namespace Rubik_Teacher {
 
 				form.nextSequenceButton.Enabled = false;
 			}
+
+			form.prevSequenceButton.Enabled = sequence > 0;
+
 			if(sequence < positions[(int) stage].Length)
 				form.rubikTeacher.fromString(positions[(int) stage][sequence]);
 		}
