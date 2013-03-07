@@ -110,15 +110,15 @@ namespace Rubik_Teacher {
 				else if(debugIn.Text.ToLower().StartsWith("highlight")) {
 					string[] args = debugIn.Text.Split(' ');
 					if(args.Length != 4)
-						debugOut.AppendText("You must provide an x, y, and z value\n");
+						debugOut.AppendText("You must provide an x, y, and z value\r\n");
 					else {
 						int x, y, z;
 						if(!int.TryParse(args[1], out x))
-							debugOut.AppendText("Invalid x-value: " + args[1] + "\n");
+							debugOut.AppendText("Invalid x-value: " + args[1] + "\r\n");
 						else if(!int.TryParse(args[2], out y))
-							debugOut.AppendText("Invalid y-value: " + args[2] + "\n");
+							debugOut.AppendText("Invalid y-value: " + args[2] + "\r\n");
 						else if(!int.TryParse(args[3], out z))
-							debugOut.AppendText("Invalid z-value: " + args[3] + "\n");
+							debugOut.AppendText("Invalid z-value: " + args[3] + "\r\n");
 						else {
 							rubikTeacher.pieceHighlighted[x, y, z] = !rubikTeacher.pieceHighlighted[x, y, z];
 							debugOut.AppendText((rubikTeacher.pieceHighlighted[x, y, z] ? "Highlighting " : "No longer highlighting ") + "piece at (" + x + ", " + y + ", " + z + ")\n");
@@ -126,10 +126,10 @@ namespace Rubik_Teacher {
 					}
 				}
 				else if(debugIn.Text.ToLower() == "help") {
-					debugOut.AppendText("Commands:\r\n\ttostr\t\t- Print cube state to console as a string\r\n\tfromstr <string>\t- Update cube state to match that encoded in <string>\r\n\tmoves <moves>\t- Perform sequence of moves in normal cube notation\r\n\thighlight <x> <y> <z>\t- Toggle highlight of piece at (x, y, z)\n");
+					debugOut.AppendText("Commands:\r\n\ttostr\t\t- Print cube state to console as a string\r\n\tfromstr <string>\t- Update cube state to match that encoded in <string>\r\n\tmoves <moves>\t- Perform sequence of moves in normal cube notation\r\n\thighlight <x> <y> <z>\t- Toggle highlight of piece at (x, y, z)\r\n");
 				}
 				else {
-					debugOut.AppendText("Unknown command or invalid arguments: " + debugIn.Text + "\n");
+					debugOut.AppendText("Unknown command or invalid arguments: " + debugIn.Text + "\r\n");
 				}
 				debugIn.Text = "";
 			}
