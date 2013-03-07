@@ -52,7 +52,7 @@ namespace Rubik_Teacher {
 		public Vector3[][] solvingPiece = {
 			new Vector3[] {},
 			new Vector3[] {},
-			new Vector3[] {new Vector3(0, 0, 0)}
+			new Vector3[] {}
 		};
 
 		public Vector3[][] targetPlace = {
@@ -94,26 +94,31 @@ namespace Rubik_Teacher {
 
 			form.tutorialTextbox.Text = "Stage " + ((int) stage + 1) + " of " + text.Length + ": " + text[(int) stage];
 			form.tutorialTextbox.Select(0, 0);
-			form.prevSequenceButton.Enabled = false;
 
-			if(moves[(int) stage].Length > 0) {
-				form.playStageButton.Enabled = true;
-				form.playStageButton.Text = "Play sequence: " + moves[(int) stage][0];
-
-				form.nextSequenceButton.Enabled = moves[(int) stage].Length > 1;
-			}
-			else {
-				form.playStageButton.Enabled = false;
-				form.playStageButton.Text = "No sequences for this stage";
-
-				form.nextSequenceButton.Enabled = false;
-			}
-
-			if(positions[(int) stage].Length > 0)
-				form.rubikTeacher.fromString(positions[(int) stage][0]);
+			resetSequence();
 		}
 
 		public void resetSequence() {
+			updateButtons();
+
+			if(sequence < positions[(int) stage].Length)
+				form.rubikTeacher.fromString(positions[(int) stage][sequence]);
+
+			form.rubikTeacher.clearHighlights();
+			if((int) stage < solvingPiece.Length)
+				if(sequence < solvingPiece[(int) stage].Length) {
+					Vector3 v = solvingPiece[(int) stage][sequence];
+					form.rubikTeacher.pieceHighlighted[(int) v.X, (int) v.Y, (int) v.Z] = true;
+				}
+
+			if((int) stage < targetPlace.Length)
+				if(sequence < targetPlace[(int) stage].Length) {
+					Vector3 v = targetPlace[(int) stage][sequence];
+					form.rubikTeacher.targetHighlighted[(int) v.X, (int) v.Y, (int) v.Z] = true;
+				}
+		}
+
+		public void updateButtons() {
 			if(moves[(int) stage].Length > 0) {
 				if(sequence < moves[(int) stage].Length) {
 					form.playStageButton.Enabled = true;
@@ -130,9 +135,6 @@ namespace Rubik_Teacher {
 			}
 
 			form.prevSequenceButton.Enabled = sequence > 0;
-
-			if(sequence < positions[(int) stage].Length)
-				form.rubikTeacher.fromString(positions[(int) stage][sequence]);
 		}
 	}
 }

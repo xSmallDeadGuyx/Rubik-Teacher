@@ -30,6 +30,7 @@ namespace Rubik_Teacher {
 		public Color bgColor = Color.CornflowerBlue;
 
 		public Color highlightColor = Color.SpringGreen;
+		public Color targetHighlightColor = Color.BlueViolet;
 
 		private Cube cube;
 		public float angleX = (float) Math.PI / 6.0F;
@@ -62,6 +63,7 @@ namespace Rubik_Teacher {
 		public List<VertexPositionColorTexture[]> faceVertices = new List<VertexPositionColorTexture[]>();
 
 		public bool[,,] pieceHighlighted = new bool[3, 3, 3];
+		public bool[,,] targetHighlighted = new bool[3, 3, 3];
 
 		public Queue<Move> moveQueue = new Queue<Move>();
 
@@ -200,7 +202,7 @@ namespace Rubik_Teacher {
 		}
 
 		public void onSequenceFinish() {
-			form.tutorial.resetSequence();
+			form.tutorial.updateButtons();
 			form.tutorial.nextSequence();
 		}
 
@@ -250,11 +252,16 @@ namespace Rubik_Teacher {
 
 				for(int x = 0; x < 3; x++)
 					for(int y = 0; y < 3; y++)
-						for(int z = 0; z < 3; z++)
+						for(int z = 0; z < 3; z++) {
 							if(pieceHighlighted[x, y, z]) {
 								VertexPositionColor[] vertices = generateHighlightVertices(x, y, z, highlightColor);
 								GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, vertices, 0, vertices.Length / 2);
 							}
+							if(targetHighlighted[x, y, z]) {
+								VertexPositionColor[] vertices = generateTargetHighlightVertices(x, y, z, targetHighlightColor);
+								GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, vertices, 0, vertices.Length / 2);
+							}
+						}
 			}
 			catch(Exception e) { Console.WriteLine(e.Message + " - " + e.StackTrace); }
 		}
@@ -421,6 +428,26 @@ namespace Rubik_Teacher {
 			return vertices;
 		}
 
+		public VertexPositionColor[] generateTargetHighlightVertices(int x, int y, int z, Color c) {
+			Vector3 offset = new Vector3(-1.6F + (float) x, -1.6F + (float) y, -1.6F + (float) z);
+			VertexPositionColor[] vertices = {
+				new VertexPositionColor(offset, c), new VertexPositionColor(offset + new Vector3(1.2F, 0F, 0F), c),
+				new VertexPositionColor(offset, c), new VertexPositionColor(offset + new Vector3(0F, 1.2F, 0F), c),
+				new VertexPositionColor(offset, c), new VertexPositionColor(offset + new Vector3(0F, 0F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(0F, 1.2F, 1.2F), c), new VertexPositionColor(offset + new Vector3(0F, 0F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(0F, 1.2F, 1.2F), c), new VertexPositionColor(offset + new Vector3(0F, 1.2F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(0F, 1.2F, 1.2F), c), new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 0F, 1.2F), c), new VertexPositionColor(offset + new Vector3(0F, 0F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 0F, 1.2F), c), new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 1.2F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 0F, 1.2F), c), new VertexPositionColor(offset + new Vector3(1.2F, 0F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 0F), c), new VertexPositionColor(offset + new Vector3(0F, 1.2F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 0F), c), new VertexPositionColor(offset + new Vector3(1.2F, 0F, 0F), c),
+				new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 0F), c), new VertexPositionColor(offset + new Vector3(1.2F, 1.2F, 1.2F), c)
+			};
+
+			return vertices;
+		}
+
 		public bool areAdjacent(FaceID face1, FaceID face2) {
 			return !((face1 == FaceID.Top && face2 == FaceID.Bottom) ||
 				(face1 == FaceID.Front && face2 == FaceID.Back) ||
@@ -569,8 +596,11 @@ namespace Rubik_Teacher {
 			return cube.ToString();
 		}
 
-		public bool areMovesHappening() {
-			return faceAngle > 0.0F || moveQueue.Count > 0;
+		public void clearHighlights() {
+			for(int i = 0; i < 3; i++)
+				for(int j = 0; j < 3; j++)
+					for(int k = 0; k < 3; k++)
+						targetHighlighted[i, j, k] = pieceHighlighted[i, j, k] = false;
 		}
 	}
 }
