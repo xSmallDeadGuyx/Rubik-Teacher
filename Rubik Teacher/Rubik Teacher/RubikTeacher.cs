@@ -189,10 +189,9 @@ namespace Rubik_Teacher {
 
 			if(ms.LeftButton == ButtonState.Pressed && inBounds(vms) && inBounds(prevMs)) {
 				angleX += (vms.Y - prevMs.Y) * 0.01F / (float) Height * 365F;
-				angleY += (prevMs.X - vms.X) * 0.01F / (float) Width * 805F;
+				angleY += (prevMs.X - vms.X) * 0.01F / (float) Width * 805F * (angleX > MathHelper.PiOver2 || angleX < -MathHelper.PiOver2 ? -1 : 1);
 			}
-			if(angleX > MathHelper.PiOver2) angleX = MathHelper.PiOver2;
-			if(angleX < -MathHelper.PiOver2) angleX = -MathHelper.PiOver2;
+			angleX = angleX % (float) (2 * Math.PI);
 
 			prevKb = kb;
 			prevMs = vms;
