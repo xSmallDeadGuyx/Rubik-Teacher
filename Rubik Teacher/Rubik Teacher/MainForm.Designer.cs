@@ -284,7 +284,7 @@ namespace Rubik_Teacher {
 			// optionsPage
 			// 
 			this.optionsPage.Controls.Add(this.displayPanel);
-			this.optionsPage.Controls.Add(this.consolePanel);
+			//this.optionsPage.Controls.Add(this.consolePanel);
 			this.optionsPage.Location = new System.Drawing.Point(4, 25);
 			this.optionsPage.Name = "optionsPage";
 			this.optionsPage.Padding = new System.Windows.Forms.Padding(3);

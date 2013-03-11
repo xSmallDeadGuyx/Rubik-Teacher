@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace Rubik_Teacher {
-	public enum FaceID {Top, Bottom, Front, Back, Left, Right};
+	public enum FaceID {Top, Bottom, Front, Back, Left, Right}; // values and data types for convenient storage
 	public enum CubeMove {Clockwise, AntiClockwise, Double};
 
 	public struct Move {
@@ -25,23 +25,23 @@ namespace Rubik_Teacher {
 
 	public class Cube {
 
-		public readonly string faceLetters = "UDFBLR";
+		public readonly string faceLetters = "UDFBLR"; // information about valid move strings
 		public readonly string validStringCharacters = "UDFBLR'2";
-		public FaceID[,,] faceColours = new FaceID[6, 3, 3];
+		public FaceID[,,] faceColours = new FaceID[6, 3, 3]; // actual cube data array
 
-		public Color[] colourIDs = {Color.Orange, Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.White};
+		public Color[] colourIDs = {Color.Orange, Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.White}; // colour ids for each face
 
-		public Cube() {
+		public Cube() { // reset cube upon initialize
 			reset();
 		}
 
 		public void reset() {
-			for(int i = 0; i < 6; i++)
+			for(int i = 0; i < 6; i++) // iterate all faces and reset the pieces to normal
 				for(int x = 0; x < 3; x++) for(int y = 0; y < 3; y++)
 						faceColours[i, x, y] = (FaceID) i;
 		}
 
-		public override string ToString() {
+		public override string ToString() { // output the cube as a string
 			string str = "";
 			for(int i = 0; i < 6; i++)
 				for(int j = 0; j < 3; j++)
@@ -50,7 +50,7 @@ namespace Rubik_Teacher {
 			return str;
 		}
 
-		public void fromString(string str) {
+		public void fromString(string str) { // update the cube based on a string
 			for(int i = 0; i < 6; i++)
 				for(int j = 0; j < 3; j++)
 					for(int k = 0; k < 3; k++) {
@@ -59,48 +59,24 @@ namespace Rubik_Teacher {
 					}
 		}
 
-		public int xFromBottomLeft(int x, int y, int rot) {
-			switch(rot) {
-				case 1:
-					return y;
-				case 2:
-					return 2 - x;
-				case -1:
-					return 2 - y;
-			}
-			return x;
-		}
-
-		public int yFromBottomLeft(int x, int y, int rot) {
-			switch(rot) {
-				case 1:
-					return 2 - x;
-				case 2:
-					return 2 - y;
-				case -1:
-					return x;
-			}
-			return x;
-		}
-
-		private FaceID[,] rotateFace(FaceID[,] face, CubeMove rot) {
+		private FaceID[,] rotateFace(FaceID[,] face, CubeMove rot) { // rotate all the colours on a face and adjacent squares
 			FaceID[,] newFace = new FaceID[5, 5];
-			for(int i = 0; i < 5; i++) for(int j = 0; j < 5; j++)
+			for(int i = 0; i < 5; i++) for(int j = 0; j < 5; j++) // for each piece on the face
 				switch(rot) {
 					case CubeMove.Clockwise:
-						newFace[4 - j, i] = face[i, j];
+						newFace[4 - j, i] = face[i, j]; // if clockwise rotation move all pieces around clockwise
 						break;
 					case CubeMove.Double:
-						newFace[4 - i, 4 - j] = face[i, j];
+						newFace[4 - i, 4 - j] = face[i, j]; // if double rotation move them around 180 degrees
 						break;
-					case CubeMove.AntiClockwise:
+					case CubeMove.AntiClockwise: // if anti-clockwise move them around anti-clockwise
 						newFace[j, 4 - i] = face[i, j];
 						break;
 				}
 			return newFace;
 		}
 
-		public bool isValidMove(String s) {
+		public bool isValidMove(String s) { // check if string contains valid move
 			for(int i = 0; i < 6; i++) {
 				char l = faceLetters[i];
 				if(s == l.ToString()) return true;
@@ -110,7 +86,7 @@ namespace Rubik_Teacher {
 			return false;
 		}
 
-		public void performMove(String s) {
+		public void performMove(String s) { // perform the move in string
 			for(int i = 0; i < 6; i++) {
 				char l = faceLetters[i];
 				if(s == l.ToString()) {
@@ -128,7 +104,7 @@ namespace Rubik_Teacher {
 			}
 		}
 
-		public Move toMove(String s) {
+		public Move toMove(String s) { // return a Move object based on move stored as a string
 			for(int i = 0; i < 6; i++) {
 				char l = faceLetters[i];
 				if(s == l.ToString())
@@ -141,21 +117,21 @@ namespace Rubik_Teacher {
 			return new Move();
 		}
 
-		public void performMove(Move move) {
+		public void performMove(Move move) { // perform move stored in Move object
 			performMove(move.face, move.twist);
 		}
 
-		public void performMove(FaceID face, CubeMove rot) {
+		public void performMove(FaceID face, CubeMove rot) { // perform move stored in FaceID value and CubeMove value
 			actualMove(face, rot);
 		}
 
 		private void actualMove(FaceID face, CubeMove rot) {
-			FaceID[,] transposed = new FaceID[5, 5];
+			FaceID[,] transposed = new FaceID[5, 5]; // create a temporary store for face being moved and adjacent piece colours
 			for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) {
-				FaceCoord coords = transposeFromFront(face, FaceID.Front, i, j);
+				FaceCoord coords = transposeFromFront(face, FaceID.Front, i, j); // pull off the colours of the face and put them into the transpose array
 				transposed[i + 1, j + 1] = faceColours[(int) coords.face, coords.i, coords.j];
 			}
-			for(int i = 0; i < 3; i++) {
+			for(int i = 0; i < 3; i++) { // pull off the affected colours from the 4 adjacent edges
 				FaceCoord coords = transposeFromFront(face, FaceID.Top, i, 2);
 				transposed[i + 1, 0] = faceColours[(int) coords.face, coords.i, coords.j];
 				coords = transposeFromFront(face, FaceID.Left, 2, i);
@@ -165,12 +141,12 @@ namespace Rubik_Teacher {
 				coords = transposeFromFront(face, FaceID.Bottom, i, 0);
 				transposed[i + 1, 4] = faceColours[(int) coords.face, coords.i, coords.j];
 			}
-			transposed = rotateFace(transposed, rot);
-			for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) {
+			transposed = rotateFace(transposed, rot); // perform the actual rotation on the colours
+			for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++) { // place the newly rotated colours back onto the rotated face
 				FaceCoord coords = transposeFromFront(face, FaceID.Front, i, j);
 				faceColours[(int) coords.face, coords.i, coords.j] = transposed[i + 1, j + 1];
 			}
-			for(int i = 0; i < 3; i++) {
+			for(int i = 0; i < 3; i++) { // place the newly rotated colours back onto the adjacent faces
 				FaceCoord coords = transposeFromFront(face, FaceID.Top, i, 2);
 				faceColours[(int) coords.face, coords.i, coords.j] = transposed[i + 1, 0];
 				coords = transposeFromFront(face, FaceID.Left, 2, i);
@@ -182,13 +158,13 @@ namespace Rubik_Teacher {
 			}
 		}
 
-		public FaceCoord transposeFromFront(FaceID target, FaceID face, int i, int j) {
+		public FaceCoord transposeFromFront(FaceID target, FaceID face, int i, int j) { // take a co-ordinate to a colour on a face and convert it for use on another face
 			return transposeFromFront(target, new FaceCoord(face, i, j));
 		}
 
-		public FaceCoord transposeFromFront(FaceID target, FaceCoord coords) {
+        public FaceCoord transposeFromFront(FaceID target, FaceCoord coords) { // take a co-ordinate to a colour on a face and convert it for use on another face
 			FaceCoord newCoords = new FaceCoord(coords.face, coords.i, coords.j);
-			switch(target) {
+			switch(target) { // hard-coded changes for each face to change the co-ordinates in the relevant way
 				case FaceID.Top:
 					switch(coords.face) {
 						case FaceID.Front:
